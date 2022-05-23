@@ -6,6 +6,8 @@ Created on Thu May 19 17:53:42 2022
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+from config import RATE, DURATION
 
 
 def lin_amp_grad(time, a0, a1):
@@ -56,15 +58,36 @@ def square(wave):
     return output
 
 
-def chirp(waveFn, time, f0, f1, a0, a1, waveType="sine"):
+def clip(wave, threshold):
+    if threshold >= 1:
+        return wave
+    if threshold == 0:
+        return square(wave)
+
+    output = np.zeros(wave.size)
+    for i in range(output.size):
+        if wave[i] >= threshold:
+            output[i] = 1
+        elif wave[i] <= -threshold:
+            output[i] = -1
+        else:
+            output[i] = wave[i]/threshold
+    return output
+
+
+def norm(wave):
+    return wave/np.abs(wave).max()
+
+
+def chirp(waveFn, time, f0, f1, a0, a1,  clipThreshold=1):
     """
         waveFn: 'lin' (default), 'exp', 'hyp' \n
         time: array of time axis values \n
         f0: start frequency (Hz) \n
         f1: end frequency (Hz) \n
         a0: start amplitude (normalised 0-1) \n
-        a1: end amplitude (normalised 0-1)
-        waveType: 'sine' (default), 'square'
+        a1: end amplitude (normalised 0-1) \n
+        clipThreshold: normalised 0-1
     """
     if waveFn == 'exp':
         wave = exp_chirp(time, f0, f1, a0, a1)
@@ -73,7 +96,7 @@ def chirp(waveFn, time, f0, f1, a0, a1, waveType="sine"):
     else:
         wave = lin_chirp(time, f0, f1, a0, a1)
 
-    return square(wave) if waveType == 'square' else wave
+    return clip(wave, clipThreshold)
 
 
 def rand_noise():
@@ -82,6 +105,32 @@ def rand_noise():
     for _ in range(RATE*DURATION):
         amplitude.append(2*random.random() - 1)
     return amplitude
+
+
+def plot(time, amplitude, sample_sz=-1):
+    '''
+    sample_sz: number of data points to plot (default -1 plots whole waveform)
+    '''
+    # Plot a sine wave using time and amplitude obtained for the sine wave
+    if sample_sz == -1:
+        plt.plot(time[0:sample_sz], amplitude[0:sample_sz])
+    else:
+        plt.plot(time[0:sample_sz], amplitude[0:sample_sz])
+
+    # Give a title for the wave plot
+    plt.title('Wave')
+
+    # Give x axis label for the wave plot
+    plt.xlabel('Time')
+
+    # Give y axis label for the wave plot
+    plt.ylabel('Amplitude')
+    plt.grid(True, which='both')
+    plt.axhline(y=0, color='k')
+    plt.show()
+
+    # Display the sine wave
+    plt.show()
 
 
 def write_to_txt(filename, data):
@@ -93,9 +142,6 @@ def write_to_txt(filename, data):
         for value in data:
             f.write('{:.4f} '.format(value))
 
-
-RATE = 44100  # sampling rate in Hz
-DURATION = 0.5  # duration of signal, in seconds
 
 f0 = 100  # start frequency (Hz)
 f1 = 2000  # end frequency (Hz)
@@ -112,25 +158,5 @@ CHOICE = 1
 if __name__ == '__main__':
     time = np.arange(0, DURATION, 1/RATE)
     amplitude = chirp(CHIRP_TYPES[CHOICE], time,
-                      f0, f1, a0, a1, waveType='square')
+                      f0, f1, a0, a1, clipThreshold=1)
     write_to_txt('wave_gen', amplitude)
-
-# # Plot
-# import matplotlib.pyplot as plot
-# # Plot a sine wave using time and amplitude obtained for the sine wave
-# plot.plot(time, amplitude)
-
-# # Give a title for the sine wave plot
-# plot.title('Sine wave')
-
-# # Give x axis label for the sine wave plot
-# plot.xlabel('Time')
-
-# # Give y axis label for the sine wave plot
-# plot.ylabel('Amplitude = sin(time)')
-# plot.grid(True, which='both')
-# plot.axhline(y=0, color='k')
-# plot.show()
-
-# # Display the sine wave
-# plot.show()
