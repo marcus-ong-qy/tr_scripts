@@ -26,7 +26,7 @@ plot(time, sig_mix, sample_sz=1000)
 write_to_txt('fft', sig_mix)
 
 # Number of samples in normalized_tone
-N = RATE * DURATION
+N = int(RATE * DURATION)
 
 yf = rfft(sig_mix)
 xf = rfftfreq(N, 1 / RATE)

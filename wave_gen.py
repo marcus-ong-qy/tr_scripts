@@ -112,10 +112,8 @@ def plot(time, amplitude, sample_sz=-1):
     sample_sz: number of data points to plot (default -1 plots whole waveform)
     '''
     # Plot a sine wave using time and amplitude obtained for the sine wave
-    if sample_sz == -1:
-        plt.plot(time[0:sample_sz], amplitude[0:sample_sz])
-    else:
-        plt.plot(time[0:sample_sz], amplitude[0:sample_sz])
+    sz = len(time) if sample_sz == -1 else min(sample_sz, len(time))
+    plt.plot(time[0:sz], amplitude[0:sz])
 
     # Give a title for the wave plot
     plt.title('Wave')
@@ -147,6 +145,7 @@ f0 = 100  # start frequency (Hz)
 f1 = 2000  # end frequency (Hz)
 a0 = 1  # start amplitude (normalised 0-1)
 a1 = 1  # end amplitude (normalised 0-1)
+clipThreshold = 0.5 # normalised 0-1
 
 CHIRP_TYPES = {
     0: 'lin',  # linear
@@ -158,5 +157,5 @@ CHOICE = 1
 if __name__ == '__main__':
     time = np.arange(0, DURATION, 1/RATE)
     amplitude = chirp(CHIRP_TYPES[CHOICE], time,
-                      f0, f1, a0, a1, clipThreshold=1)
+                      f0, f1, a0, a1, clipThreshold=clipThreshold)
     write_to_txt('wave_gen', amplitude)
