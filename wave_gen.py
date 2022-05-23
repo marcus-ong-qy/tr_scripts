@@ -49,22 +49,31 @@ def hyp_chirp(time, f0, f1, a0, a1):
     return np.multiply(a, x)
 
 
-def chirp(typeof, time, f0, f1, a0, a1):
+def square(wave):
+    output = np.zeros(wave.size)
+    for i in range(output.size):
+        output[i] = 1 if wave[i] >= 0 else -1
+    return output
+
+
+def chirp(waveFn, time, f0, f1, a0, a1, waveType="sine"):
     """
-        typeof: lin, exp, hyp \n
+        waveFn: 'lin' (default), 'exp', 'hyp' \n
         time: array of time axis values \n
         f0: start frequency (Hz) \n
         f1: end frequency (Hz) \n
         a0: start amplitude (normalised 0-1) \n
         a1: end amplitude (normalised 0-1)
+        waveType: 'sine' (default), 'square'
     """
-    if typeof == 'lin':
-        return lin_chirp(time, f0, f1, a0, a1)
-    if typeof == 'exp':
-        return exp_chirp(time, f0, f1, a0, a1)
-    if typeof == 'hyp':
-        return hyp_chirp(time, f0, f1, a0, a1)
-    raise TypeError('invalid type! Types allowed: lin, exp, hyp')
+    if waveFn == 'exp':
+        wave = exp_chirp(time, f0, f1, a0, a1)
+    elif waveFn == 'hyp':
+        wave = hyp_chirp(time, f0, f1, a0, a1)
+    else:
+        wave = lin_chirp(time, f0, f1, a0, a1)
+
+    return square(wave) if waveType == 'square' else wave
 
 
 def rand_noise():
@@ -102,7 +111,8 @@ CHOICE = 1
 
 if __name__ == '__main__':
     time = np.arange(0, DURATION, 1/RATE)
-    amplitude = chirp(CHIRP_TYPES[CHOICE], time, f0, f1, a0, a1)
+    amplitude = chirp(CHIRP_TYPES[CHOICE], time,
+                      f0, f1, a0, a1, waveType='square')
     write_to_txt('wave_gen', amplitude)
 
 # # Plot
