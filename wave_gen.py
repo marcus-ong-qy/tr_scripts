@@ -7,6 +7,7 @@ Created on Thu May 19 17:53:42 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.fft import rfft, rfftfreq
 import random
 from config import RATE, DURATION
 
@@ -133,6 +134,19 @@ def plot(time, amplitude, sample_sz=-1, title='Wave'):
 
     # Display the sine wave
     plt.show()
+
+
+def show_fft(amplitude, title="FFT"):
+    yf = rfft(amplitude)
+    xf = rfftfreq(amplitude.size, 1/RATE)
+
+    plt.title(f'FFT: {title}')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Amplitude')
+    plt.plot(xf, np.abs(yf))
+    plt.show()
+
+    return xf, yf
 
 
 def write_to_txt(filename, data):

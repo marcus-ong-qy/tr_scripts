@@ -6,10 +6,8 @@ Created on Mon May 23 16:21:53 2022
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.fft import rfft, rfftfreq
 from config import RATE, DURATION
-from wave_gen import gauss_noise, chirp, plot, norm, write_to_txt
+from wave_gen import gauss_noise, chirp, plot, norm, write_to_txt, show_fft
 
 
 time = np.arange(0, DURATION, 1/RATE)
@@ -28,10 +26,4 @@ plot(time, sig_mix, sample_sz=1000, title='sig_mix')
 write_to_txt('fft', sig_mix)
 
 # Number of samples in normalized_tone
-N = int(RATE * DURATION)
-
-yf = rfft(sig_mix)
-xf = rfftfreq(N, 1 / RATE)
-
-plt.plot(xf, np.abs(yf))
-plt.show()
+show_fft(sig_mix, title="sig_mix")
