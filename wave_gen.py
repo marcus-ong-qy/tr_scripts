@@ -7,6 +7,7 @@ Created on Thu May 19 17:53:42 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 from config import RATE, DURATION
 
 
@@ -75,8 +76,16 @@ def clip(wave, threshold):
     return output
 
 
-def norm(wave):
-    return wave/np.abs(wave).max()
+def norm(wave, symmetric=False):
+    if symmetric:
+        return wave/np.abs(wave).max()
+
+    max_pt = wave.max()
+    min_pt = wave.min()
+    mid = (max_pt + min_pt)/2
+    amp = (max_pt - min_pt)/2
+
+    return (wave-mid)/amp
 
 
 def chirp(waveFn, time, f0, f1, a0, a1,  clipThreshold=1):
@@ -99,15 +108,11 @@ def chirp(waveFn, time, f0, f1, a0, a1,  clipThreshold=1):
     return clip(wave, clipThreshold)
 
 
-def rand_noise():
-    import random
-    amplitude = []
-    for _ in range(RATE*DURATION):
-        amplitude.append(2*random.random() - 1)
-    return amplitude
+def gauss_noise(time):
+    return np.random.normal(0, 1, time.size)
 
 
-def plot(time, amplitude, sample_sz=-1):
+def plot(time, amplitude, sample_sz=-1, title='Wave'):
     '''
     sample_sz: number of data points to plot (default -1 plots whole waveform)
     '''
@@ -116,7 +121,7 @@ def plot(time, amplitude, sample_sz=-1):
     plt.plot(time[0:sz], amplitude[0:sz])
 
     # Give a title for the wave plot
-    plt.title('Wave')
+    plt.title(title)
 
     # Give x axis label for the wave plot
     plt.xlabel('Time')
@@ -125,7 +130,6 @@ def plot(time, amplitude, sample_sz=-1):
     plt.ylabel('Amplitude')
     plt.grid(True, which='both')
     plt.axhline(y=0, color='k')
-    plt.show()
 
     # Display the sine wave
     plt.show()
@@ -145,7 +149,7 @@ f0 = 100  # start frequency (Hz)
 f1 = 2000  # end frequency (Hz)
 a0 = 1  # start amplitude (normalised 0-1)
 a1 = 1  # end amplitude (normalised 0-1)
-clipThreshold = 0.5 # normalised 0-1
+clipThreshold = 0.5  # normalised 0-1
 
 CHIRP_TYPES = {
     0: 'lin',  # linear
