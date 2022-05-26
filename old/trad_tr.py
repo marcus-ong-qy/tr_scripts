@@ -13,14 +13,15 @@ from wave_gen import chirp,  plot, norm, show_fft, gauss_noise, clip, write_to_t
 time = np.arange(0, DURATION, 1/RATE)
 
 # emitted signal s(t)
-sig_s = chirp('lin', time, 100, 2000, 1, 1, clipThreshold=0.7)
+# sig_s = chirp('lin', time, 100, 2000, 1, 1, clipThreshold=0.7)
+sig_s = signal.unit_impulse(time.size, idx=1)
 
 # detected response r(t) (with noise)
-sig_r = chirp('lin', time, 200, 100, 1, 1, clipThreshold=0.5)
-sig_r += gauss_noise(time)*0.5
+sig_r = chirp('lin', time, 20, 10, 1, 1, clipThreshold=1)
+# sig_r += gauss_noise(time)*0.5
 
-# impulse response h(t) = s(t) x r(t)
-sig_ir = clip(norm(signal.correlate(sig_s, sig_r)), 0)
+# impulse response (?) h(t) = s(t) x r(t)
+sig_ir = clip(norm(signal.correlate(sig_s, sig_r)), 1)
 
 # Deconvolution TODO
 sig_decon, sig_noise = signal.deconvolve(sig_r[1:], sig_s[1:])
@@ -36,10 +37,10 @@ def timeline(amplitude):
     return np.arange(0, DURATION*(len(amplitude)/time.size), 1/RATE)
 
 
-plot(timeline(sig_s), sig_s, sample_sz=1000, title='sig_s')
+plot(timeline(sig_s), sig_s, sample_sz=-1, title='sig_s')
 show_fft(sig_s, title="sig_s")
 
-plot(timeline(sig_r), sig_r, sample_sz=1000, title='sig_r')
+plot(timeline(sig_r), sig_r, sample_sz=-1, title='sig_r')
 show_fft(sig_r, title="sig_r")
 
 plot(timeline(sig_ir),
