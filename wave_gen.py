@@ -7,7 +7,7 @@ Created on Thu May 19 17:53:42 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fft import rfft, rfftfreq
+from scipy.fft import rfft, rfftfreq, fft, fftfreq
 import random
 from config import RATE, DURATION
 
@@ -118,7 +118,10 @@ def plot(time, amplitude, sample_sz=-1, title='Wave'):
     sample_sz: number of data points to plot (default -1 plots whole waveform)
     '''
     # Plot a sine wave using time and amplitude obtained for the sine wave
-    sz = len(time) if sample_sz == -1 else min(sample_sz, len(time))
+    size = time.size if isinstance(
+        time, np.ndarray) else len(time)
+
+    sz = size if sample_sz == -1 else min(sample_sz, size)
     plt.plot(time[0:sz], amplitude[0:sz])
 
     # Give a title for the wave plot
@@ -136,14 +139,25 @@ def plot(time, amplitude, sample_sz=-1, title='Wave'):
     plt.show()
 
 
-def show_fft(amplitude, title="FFT"):
+def get_fft(amplitude):
     yf = rfft(amplitude)
-    xf = rfftfreq(amplitude.size, 1/RATE)
+    size = amplitude.size if isinstance(
+        amplitude, np.ndarray) else len(amplitude)
 
+    xf = rfftfreq(size, 1/RATE)
+
+    return xf, yf
+
+
+def show_fft(amplitude, title="FFT", xlim=None):
+    xf, yf = get_fft(amplitude)
+    if xlim is None:
+        xlim = [min(xf), max(xf)]
     plt.title(f'FFT: {title}')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Amplitude')
     plt.plot(xf, np.abs(yf))
+    plt.xlim(xlim)
     plt.show()
 
     return xf, yf

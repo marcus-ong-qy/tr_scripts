@@ -36,7 +36,7 @@ _t, sig_h = signal.impulse(([1.0], [1.0, 2.0, 1.0]), N=time.size)
 
 
 # detected signal r(t)
-sig_r = np.convolve(sig_s, sig_h)
+sig_r = signal.fftconvolve(sig_s, sig_h)
 
 # Sig_h = fft.fft(sig_h)
 # f_axis = fft.fftfreq(Sig_h.size, 1/RATE)
@@ -60,10 +60,10 @@ sig_decon, sig_noise = signal.deconvolve(sig_r[1:], sig_s[1:])
 
 
 plot(timeline(sig_s), sig_s, sample_sz=-1, title='sig_s s(t)')
-show_fft(sig_s, title="sig_s", xlim=[0, 200])
+_, sig_sy = show_fft(sig_s, title="sig_s", xlim=[0, 200])
 
 plot(timeline(sig_h), sig_h, sample_sz=-1, title='sig_h h(t)')
-show_fft(sig_h, title="sig_h", xlim=[0, 10])
+_, sig_hy = show_fft(sig_h, title="sig_h", xlim=[0, 10])
 
 plot(timeline(sig_r), sig_r, sample_sz=-1, title='sig_r r(t)')
 show_fft(sig_r, title="sig_r", xlim=[0, 200])
