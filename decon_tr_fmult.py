@@ -9,7 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal, fft
 from config import RATE, DURATION
-from wave_gen import chirp,  plot, write_to_txt, norm, show_fft, get_fft, gauss_noise
+from wave_gen import chirp,  plot, write_to_txt, norm, show_fft, get_fft, \
+    gauss_noise, show_fft_cmplx
 
 
 def timeline(amplitude):
@@ -19,8 +20,8 @@ def timeline(amplitude):
 time = np.arange(0, DURATION, 1/RATE)
 
 # emitted signal s(t)
-sig_s = chirp('lin', time, 1, 1, 1, 1, clipThreshold=1)
-# sig_s = signal.unit_impulse(time.size, idx=0)/2 + \
+sig_s = chirp('lin', time, 264.6, 2646, 1, 1, clipThreshold=1)
+# sig_s = signal.unit_impulse(time.size, idx=1)/2 + \
 #     signal.unit_impulse(time.size, idx=time.size//4)/2 + \
 #     signal.unit_impulse(time.size, idx=time.size//2)
 # sig_s = np.ones(time.size)
@@ -48,13 +49,13 @@ sig_decon, sig_noise = signal.deconvolve(sig_r[1:], sig_s[1:])
 
 
 plot(timeline(sig_s), sig_s, sample_sz=-1, title='sig_s s(t)')
-show_fft(sig_s, title="sig_s", xlim=[0, 200])
+show_fft(sig_s, title="sig_s", xlim=[0, 5000])
 
 plot(timeline(sig_h), sig_h, sample_sz=-1, title='sig_h h(t)')
 show_fft(sig_h, title="sig_h", xlim=[0, 10])
 
 plot(timeline(sig_r), sig_r, sample_sz=-1, title='sig_r r(t)')
-show_fft(sig_r, title="sig_r", xlim=[0, 200])
+show_fft_cmplx(sig_r, title="sig_r", xlim=[0, 5000])
 
 plot(timeline(sig_decon),
      sig_decon, sample_sz=-1, title='sig_decon h(t)')

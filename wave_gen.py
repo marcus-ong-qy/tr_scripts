@@ -163,6 +163,30 @@ def show_fft(amplitude, title="FFT", xlim=None):
     return xf, yf
 
 
+def get_fft_cmplx(amplitude):
+    yf = fft(amplitude)
+    size = amplitude.size if isinstance(
+        amplitude, np.ndarray) else len(amplitude)
+
+    xf = fftfreq(size, 1/RATE)
+
+    return xf, yf
+
+
+def show_fft_cmplx(amplitude, title="FFT", xlim=None):
+    xf, yf = get_fft_cmplx(amplitude)
+    if xlim is None:
+        xlim = [min(xf), max(xf)]
+    plt.title(f'FFT: {title}')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Amplitude')
+    plt.plot(xf, np.abs(yf))
+    plt.xlim(xlim)
+    plt.show()
+
+    return xf, yf
+
+
 def write_to_txt(filename, data):
     '''
         Writes wave data to .txt file that can be read by Audacity

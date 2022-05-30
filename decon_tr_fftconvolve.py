@@ -6,6 +6,7 @@ Created on Mon May 23 09:45:07 2022
 """
 
 import numpy as np
+from impulseest import impulseest
 import matplotlib.pyplot as plt
 from scipy import signal, fft
 from config import RATE, DURATION
@@ -19,7 +20,7 @@ def timeline(amplitude):
 time = np.arange(0, DURATION, 1/RATE)
 
 # emitted signal s(t)
-sig_s = chirp('lin', time, 100, 100, 1, 1, clipThreshold=1)
+sig_s = chirp('lin', time, 1, 1, 1, 1, clipThreshold=1)
 # sig_s = signal.unit_impulse(time.size, idx=0)/2 + \
 #     signal.unit_impulse(time.size, idx=time.size//4)/2 + \
 #     signal.unit_impulse(time.size, idx=time.size//2)
@@ -54,13 +55,15 @@ sig_r = signal.fftconvolve(sig_s, sig_h)
 # plt.show()
 
 # Deconvolution h(t)
-sig_decon, sig_noise = signal.deconvolve(sig_r[1:], sig_s[1:])
+sig_decon, sig_noise = signal.deconvolve(
+    sig_r, sig_s[1:] if sig_s[0] == 0 else sig_s)
+# sig_decon = impulseest(sig_s, sig_r[0:sig_s.size])
 
-# sig_y = signal.convolve(sig_ir, sig_tr)
+# sig_y = signal.convolve(sig_decon[::-1], sig_decon)
 
 
 plot(timeline(sig_s), sig_s, sample_sz=-1, title='sig_s s(t)')
-_, sig_sy = show_fft(sig_s, title="sig_s", xlim=[0, 200])
+_, sig_sy = show_fft(sig_s, title="sig_s", xlim=[0, 3000])
 
 plot(timeline(sig_h), sig_h, sample_sz=-1, title='sig_h h(t)')
 _, sig_hy = show_fft(sig_h, title="sig_h", xlim=[0, 10])
@@ -75,13 +78,14 @@ plot(timeline(sig_decon),
      sig_decon, sample_sz=-1, title='sig_decon h(t)')
 # show_fft(sig_decon, title="sig_decon")
 
-plot(timeline(sig_noise),
-     sig_noise, sample_sz=-1, title='sig_noise')
+# plot(timeline(sig_noise),
+#      sig_noise, sample_sz=-1, title='sig_noise')
 
 
-# plot(timeline(sig_h_inv),
-#      sig_h_inv, sample_sz=-1, title='sig_h_inv "broadcast to system"')
-# # show_fft(sig_h_inv, title="sig_h_inv")
+# plot(timeline(sig_y),
+#      sig_y, sample_sz=-1, title='sig_y')
+# show_fft(sig_y, title="sig_y")
 
 # write_to_txt('h', sig_h)
+write_to_txt('s', norm(sig_s))
 write_to_txt('r', norm(sig_r))
