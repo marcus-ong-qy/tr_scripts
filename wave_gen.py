@@ -197,20 +197,20 @@ def write_to_txt(filename, data):
             f.write('{:.4f} '.format(value))
 
 
-f0 = 100  # start frequency (Hz)
-f1 = 2000  # end frequency (Hz)
-a0 = 1  # start amplitude (normalised 0-1)
-a1 = 1  # end amplitude (normalised 0-1)
-clipThreshold = 0.5  # normalised 0-1
-
-CHIRP_TYPES = {
-    0: 'lin',  # linear
-    1: 'exp',  # exponential
-    2: 'hyp',  # hyperbolic
-}
-CHOICE = 1
-
 if __name__ == '__main__':
+    f0 = 100  # start frequency (Hz)
+    f1 = 2000  # end frequency (Hz)
+    a0 = 1  # start amplitude (normalised 0-1)
+    a1 = 1  # end amplitude (normalised 0-1)
+    clipThreshold = 0.5  # normalised 0-1
+
+    CHIRP_TYPES = {
+        0: 'lin',  # linear
+        1: 'exp',  # exponential
+        2: 'hyp',  # hyperbolic
+    }
+    CHOICE = 1
+
     time = np.arange(0, DURATION, 1/RATE)
     amplitude = chirp(CHIRP_TYPES[CHOICE], time,
                       f0, f1, a0, a1, clipThreshold=clipThreshold)
