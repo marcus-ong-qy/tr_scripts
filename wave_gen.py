@@ -109,8 +109,8 @@ def chirp(waveFn, time, f0, f1, a0, a1,  clipThreshold=1):
     return clip(wave, clipThreshold)
 
 
-def gauss_noise(time):
-    return np.random.normal(0, 1, time.size)
+def gauss_noise(size):
+    return np.random.normal(0, 1, size)
 
 
 def plot(time, amplitude, sample_sz=-1, title='Wave'):
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     f1 = 2000  # end frequency (Hz)
     a0 = 1  # start amplitude (normalised 0-1)
     a1 = 1  # end amplitude (normalised 0-1)
-    clipThreshold = 0.5  # normalised 0-1
+    clipThreshold = 1  # normalised 0-1
 
     CHIRP_TYPES = {
         0: 'lin',  # linear
