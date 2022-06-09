@@ -10,10 +10,15 @@ import time
 
 serial_port = 'COM3'
 baud_rate = 2000000  # In arduino, Serial.begin(baud_rate)
-write_to_bin_path = "output_bin.txt"
+write_to_bin_path = "static_piezo_noise_bin.txt"
 
 
 def main():
+    '''
+        Reads serial output from Arduino and writes data to binary file
+        You can run bin2text.py to convert the binary data to Audacity
+        Sample Data Import text file format
+    '''
     sample_counter = 0
 
     try:
@@ -53,8 +58,8 @@ def main():
         sample_rate = sample_counter / sample_duration
 
         print('Sample count:', sample_counter)
-        print('Sample Duration (s):', sample_duration)
-        print('Sample Rate (Hz):', sample_rate)
+        print('Sample Duration (s):', '{:.3f}'.format(sample_duration))
+        print('Sample Rate (Hz):', int(sample_rate + 1))
 
     finally:
         ser.close()

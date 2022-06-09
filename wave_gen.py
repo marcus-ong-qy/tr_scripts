@@ -139,25 +139,28 @@ def plot(time, amplitude, sample_sz=-1, title='Wave'):
     plt.show()
 
 
-def get_fft(amplitude):
+def get_fft(amplitude, rate=RATE):
     yf = rfft(amplitude)
     size = amplitude.size if isinstance(
         amplitude, np.ndarray) else len(amplitude)
 
-    xf = rfftfreq(size, 1/RATE)
+    xf = rfftfreq(size, 1/rate)
 
     return xf, yf
 
 
-def show_fft(amplitude, title="FFT", xlim=None):
-    xf, yf = get_fft(amplitude)
+def show_fft(amplitude, title="FFT", xlim=None, ylim=None, rate=RATE):
+    xf, yf = get_fft(amplitude, rate=rate)
     if xlim is None:
         xlim = [min(xf), max(xf)]
+    if ylim is None:
+        ylim = [min(yf), max(yf)]
     plt.title(f'FFT: {title}')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Amplitude')
     plt.plot(xf, np.abs(yf))
     plt.xlim(xlim)
+    plt.ylim(ylim)
     plt.show()
 
     return xf, yf
