@@ -5,7 +5,10 @@ Created on Thu Jun  9 12:30:04 2022
 @author: OQinYuan
 """
 # import numpy as np
+import struct
 from serial_read import WRITE_TO_BIN_PATH
+
+WRITE_TO_TXT_PATH = "440_samples/sample_13867_5s_1.txt"
 
 
 def bin2text():
@@ -17,15 +20,22 @@ def bin2text():
         or import to Audacity
     '''
 
-    write_to_txt_path = "noise_samples/sample_17660_2.txt"
-
     with open(WRITE_TO_BIN_PATH, "rb") as file:
         data = file.read()
 
-    array = list(map(int, data))
+        array = [
+            struct.unpack('>H', data[i:i+2])[0] for i in range(0, len(data), 2)
+        ]
 
-    with open(write_to_txt_path, "w") as f:
+        # # for i in range(0, len(data), 2):
+        # #     info[i] = data[i, i+2]
+
+        # array = struct.unpack("<H", data)
+        # print(array)
+
+    with open(WRITE_TO_TXT_PATH, "w") as f:
         for d in array:
+            # print(d)
             val = (d / 512) - 1
             f.write('{:.4f} '.format(val))
 

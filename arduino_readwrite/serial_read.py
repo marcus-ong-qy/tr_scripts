@@ -136,5 +136,46 @@ def serial_read():
         ser.close()
 
 
+def serial_read_time(t):
+    '''
+        Reads serial output from Arduino and writes data to binary file
+        You can run bin2text.py to convert the binary data to Audacity
+        Sample Data Import text file format
+    '''
+    n = 0
+    try:
+        ser = serial.Serial(serial_port, baud_rate)
+
+        with open(WRITE_TO_BIN_PATH, 'wb') as f:
+            BUFFER_COUNT = 20000
+        # give buffer cos initial reading frequencies are somewhat unreliable
+            _buffer(BUFFER_COUNT, ser)
+
+            print('Recording Start!')
+            print(f'Recording for {t} seconds...')
+
+            start = time.time()
+
+            while time.time() - start < t:
+                try:
+                    line = ser.readline().strip()
+                    if len(line) == 2:
+                        f.write(line)
+                        n += 1
+
+                # except KeyboardInterrupt:
+                #     print('\nKeyboardInterrupt\n')
+                #     break
+                except UnicodeDecodeError:
+                    print('UnicodeDecodeError')
+
+        print('Sample Duration (s):', '{:.3f}'.format(t))
+        # print('Indicated Sample Rate (Hz):', SAMPLE_RATE)
+        print('Sample rate (Hz):', n//t)
+
+    finally:
+        ser.close()
+
+
 if __name__ == '__main__':
-    serial_read()
+    serial_read_time(5)

@@ -13,7 +13,7 @@ from wave_gen import show_fft, get_fft
 def read_txt(filename):
     with open(f'{filename.replace(".txt", "")}.txt', 'r') as f:
         data_arr = f.read().split()
-        data = np.array(map(float, list(data_arr)))
+        data = np.array(list(map(float, list(data_arr))))
 
     return data
 
@@ -43,8 +43,8 @@ def fft_get_peak_freq(x, y):
 
 def main():
     x, y = get_fft_from_txt(
-        'arduino_readwrite/noise_samples/sample_17660_2', rate=17660,
-        xlim=[0, 100], ylim=[0, 800], show=True
+        'arduino_readwrite/440_samples/sample_13867_5s_1.txt', rate=13867,
+        xlim=[0, 1000], ylim=[0, 100], show=True
     )
 
     peak = fft_get_peak_freq(x, y)

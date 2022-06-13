@@ -149,12 +149,11 @@ def get_fft(amplitude, rate=RATE):
     return xf, yf
 
 
-def show_fft(amplitude, title="FFT", xlim=None, ylim=None, rate=RATE):
-    xf, yf = get_fft(amplitude, rate=rate)
+def display_fft(xf, yf, title="FFT", xlim=None, ylim=None):
     if xlim is None:
         xlim = [min(xf), max(xf)]
     if ylim is None:
-        ylim = [min(yf), max(yf)]
+        ylim = [0, max(yf)]
     plt.title(f'FFT: {title}')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Amplitude')
@@ -166,18 +165,25 @@ def show_fft(amplitude, title="FFT", xlim=None, ylim=None, rate=RATE):
     return xf, yf
 
 
-def get_fft_cmplx(amplitude):
-    yf = fft(amplitude)
-    size = amplitude.size if isinstance(
-        amplitude, np.ndarray) else len(amplitude)
-
-    xf = fftfreq(size, 1/RATE)
+def show_fft(amplitude, title="FFT", xlim=None, ylim=None, rate=RATE):
+    xf, yf = get_fft(amplitude, rate=rate)
+    display_fft(xf, yf, title=title, xlim=xlim, ylim=ylim)
 
     return xf, yf
 
 
-def show_fft_cmplx(amplitude, title="FFT", xlim=None):
-    xf, yf = get_fft_cmplx(amplitude)
+def get_fft_cmplx(amplitude, rate=RATE):
+    yf = fft(amplitude)
+    size = amplitude.size if isinstance(
+        amplitude, np.ndarray) else len(amplitude)
+
+    xf = fftfreq(size, 1/rate)
+
+    return xf, yf
+
+
+def show_fft_cmplx(amplitude, title="FFT", xlim=None, rate=RATE):
+    xf, yf = get_fft_cmplx(amplitude, rate=rate)
     if xlim is None:
         xlim = [min(xf), max(xf)]
     plt.title(f'FFT: {title}')
