@@ -161,6 +161,7 @@ def serial_read_time(t):
                     line = ser.readline().strip()
                     if len(line) == 2:
                         f.write(line)
+                        print(line)
                         n += 1
 
                 # except KeyboardInterrupt:

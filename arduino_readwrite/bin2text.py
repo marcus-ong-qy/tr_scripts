@@ -8,7 +8,7 @@ Created on Thu Jun  9 12:30:04 2022
 import struct
 from serial_read import WRITE_TO_BIN_PATH
 
-WRITE_TO_TXT_PATH = "440_samples/sample_13867_5s_1.txt"
+WRITE_TO_TXT_PATH = "noise_samples/sample"
 
 
 def bin2text():
@@ -33,7 +33,7 @@ def bin2text():
         # array = struct.unpack("<H", data)
         # print(array)
 
-    with open(WRITE_TO_TXT_PATH, "w") as f:
+    with open(f'{WRITE_TO_TXT_PATH.replace(".txt", "")}.txt', "w") as f:
         for d in array:
             # print(d)
             val = (d / 512) - 1
