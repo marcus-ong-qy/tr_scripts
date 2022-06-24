@@ -41,10 +41,10 @@ def fft_get_peak_freq(x, y):
     return x[y_max]
 
 
-def main():
+def data_analysis(txt_file, rate=RATE, xlim=None, ylim=None):
+
     x, y = get_fft_from_txt(
-        'arduino_readwrite/440_samples/sample_13867_5s_1.txt', rate=13867,
-        xlim=[0, 1000], ylim=[0, 100], show=True
+        txt_file, rate=rate, xlim=xlim, ylim=ylim, show=True
     )
 
     peak = fft_get_peak_freq(x, y)
@@ -52,7 +52,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    ANAL_PATH = 'oscilloscope/noisesamp/sensornoise3.Wfm'
+    data_analysis(ANAL_PATH, xlim=[0, 200], ylim=[0, 25])
 
 # x, y = get_fft_from_txt(
 #     'arduino_readwrite/noise_samples/static_piezo_noise_15642', rate=15642)

@@ -157,18 +157,18 @@ def serial_read_time(t):
             start = time.time()
 
             while time.time() - start < t:
-                try:
-                    line = ser.readline().strip()
-                    if len(line) == 2:
-                        f.write(line)
-                        print(line)
-                        n += 1
+                # try:
+                line = ser.readline().strip()
+                if len(line) == 2:
+                    f.write(line)
+                    # print(line)
+                    n += 1
 
                 # except KeyboardInterrupt:
                 #     print('\nKeyboardInterrupt\n')
                 #     break
-                except UnicodeDecodeError:
-                    print('UnicodeDecodeError')
+                # except UnicodeDecodeError:
+                #     print('UnicodeDecodeError')
 
         print('Sample Duration (s):', '{:.3f}'.format(t))
         # print('Indicated Sample Rate (Hz):', SAMPLE_RATE)
@@ -179,4 +179,4 @@ def serial_read_time(t):
 
 
 if __name__ == '__main__':
-    serial_read_time(5)
+    serial_read_time(2)

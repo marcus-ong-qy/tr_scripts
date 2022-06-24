@@ -8,10 +8,10 @@ Created on Thu Jun  9 12:30:04 2022
 import struct
 from serial_read import WRITE_TO_BIN_PATH
 
-WRITE_TO_TXT_PATH = "noise_samples/sample"
+WRITE_TO_TXT_PATH = "chirp/13803_1"
 
 
-def bin2text():
+def bin2text(path):
     '''
         Converts binary data from serial_read.py to Audacity
         Sample Data Import text file format \n
@@ -33,12 +33,16 @@ def bin2text():
         # array = struct.unpack("<H", data)
         # print(array)
 
-    with open(f'{WRITE_TO_TXT_PATH.replace(".txt", "")}.txt', "w") as f:
+    formatted_path = f'{path.replace(".txt", "")}.txt'
+
+    with open(formatted_path, "w") as f:
         for d in array:
             # print(d)
             val = (d / 512) - 1
             f.write('{:.4f} '.format(val))
 
+    print('Written to', formatted_path)
+
 
 if __name__ == '__main__':
-    bin2text()
+    bin2text(WRITE_TO_TXT_PATH)
