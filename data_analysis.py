@@ -52,8 +52,8 @@ def data_analysis(txt_file, rate=RATE, xlim=None, ylim=None):
 
 
 if __name__ == '__main__':
-    ANAL_PATH = 'oscilloscope/noisesamp/sensornoise3.Wfm'
-    data_analysis(ANAL_PATH, xlim=[0, 200], ylim=[0, 25])
+    ANAL_PATH = 'oscilloscope/440test1/RefCurve_2022-06-23_0_175133.Wfm'
+    data_analysis(ANAL_PATH, xlim=[0, 2000])
 
 # x, y = get_fft_from_txt(
 #     'arduino_readwrite/noise_samples/static_piezo_noise_15642', rate=15642)

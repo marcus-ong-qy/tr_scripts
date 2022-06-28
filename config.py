@@ -6,4 +6,4 @@ Created on Mon May 23 16:27:00 2022
 """
 
 RATE = 25000  # sampling rate in Hz
-DURATION = 0.5  # duration of signal, in seconds
+DURATION = 0.25  # duration of signal, in seconds

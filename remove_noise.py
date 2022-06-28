@@ -1,7 +1,7 @@
 import numpy as np
 from config import RATE
 from data_analysis import read_txt
-from denoise import removeNoise
+from _denoise import removeNoise
 from scipy import signal
 from scipy.fft import irfft
 from wave_gen import write_to_txt, get_fft, display_fft
@@ -19,28 +19,28 @@ def threshold_filter(xf, yf, threshold, scale=0):
 
     return filtered_yf
 
-# TODO zero function
+# TODO low pass
 
 
-def butter_highpass(cutoff, fs, order=5):
+def _butter_highpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = signal.butter(order, normal_cutoff, btype="high", analog=False)
     return b, a
 
 
-def butter_highpass_filter(data, cutoff, fs, order=5):
-    b, a = butter_highpass(cutoff, fs, order=order)
+def _butter_highpass_filter(data, cutoff, fs, order=5):
+    b, a = _butter_highpass(cutoff, fs, order=order)
     y = signal.filtfilt(b, a, data)
     return y
 
 
-def butter_highpass_filter_f(data, cutoff, fs, order=5):
+def butter_highpass_filter_f(data, cutoff, fs=RATE, order=5):
     '''
     butter highpass that takes in Fourier data instead
     '''
     sig = irfft(data)
-    y = butter_highpass_filter(sig, cutoff, fs, order=order)
+    y = _butter_highpass_filter(sig, cutoff, fs, order=order)
     xf, yf = get_fft(y, rate=fs)
     return xf, yf
 
@@ -67,7 +67,7 @@ def remove_noise(sig_path, noise_path, plot=True, xlim=None, ylim=None):
     plot and display_fft(
         sig_xf, sig_yf, title='noise filtered', xlim=xlim, ylim=ylim)
 
-    sig_xf, sig_yf = butter_highpass_filter_f(sig_yf, 200, RATE)
+    sig_xf, sig_yf = butter_highpass_filter_f(sig_yf, 200)
 
     plot and display_fft(
         sig_xf, sig_yf, title='noise and low filtered', xlim=xlim, ylim=ylim)

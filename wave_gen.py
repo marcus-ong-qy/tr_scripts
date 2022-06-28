@@ -8,7 +8,7 @@ Created on Thu May 19 17:53:42 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import rfft, rfftfreq, fft, fftfreq
-import random
+# import random
 from config import RATE, DURATION
 
 
@@ -75,6 +75,13 @@ def clip(wave, threshold):
         else:
             output[i] = wave[i]/threshold
     return output
+
+
+def reverse(wave):
+    if type(wave) == np.ndarray:
+        return np.flip(wave)
+
+    return wave[::-1]
 
 
 def norm(wave, symmetric=False):
