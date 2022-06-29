@@ -41,6 +41,25 @@ def exp_chirp(time, f0, f1, a0, a1):
     return np.multiply(a, x)
 
 
+def exp_chirp_and_inverse(time, f0, f1, a0, a1):
+    k = ((f1/f0)**(1/DURATION))
+    a = lin_amp_grad(time, a0, a1)
+    x = np.sin(
+        2 * np.pi * f0 * (
+            (k**time - 1) / np.log(k)
+        )
+    )
+    chirp = np.multiply(a, x)
+
+    R = np.log(f1/f0)
+
+    # Inverse filter
+    k_inv = np.exp(time*R/DURATION)
+    inv = chirp[::-1]/k_inv
+
+    return chirp, inv
+
+
 def hyp_chirp(time, f0, f1, a0, a1):
     a = lin_amp_grad(time, a0, a1)
     x = np.sin(
@@ -228,6 +247,11 @@ if __name__ == '__main__':
     CHOICE = 1
 
     time = np.arange(0, DURATION, 1/RATE)
-    amplitude = chirp(CHIRP_TYPES[CHOICE], time,
-                      f0, f1, a0, a1, clipThreshold=clipThreshold)
-    write_to_txt('wave_gen', amplitude)
+    # amplitude = chirp(CHIRP_TYPES[CHOICE], time,
+    #                   f0, f1, a0, a1, clipThreshold=clipThreshold)
+    # write_to_txt('wave_gen', amplitude)
+
+    chirp_data, inv = exp_chirp_and_inverse(time, f0, f1, a0, a1)
+
+    plot(time, chirp_data)
+    plot(time, inv)
