@@ -39,13 +39,14 @@ def decon_tr(
 
     # Cross-correlation h(t)
     sig_h = signal.correlate(sig_r, sig_s)
+    sig_h = np.pad(sig_h, (sig_h.size, sig_h.size))
     sig_h = ensure_filter_more_bigger_than_zero_everywhere(
-        sig_h, threshold=0.01)
+        sig_h, threshold=0.001)
     log and print('\n\nsig_h:\n', sig_h)
 
     # # if this is more longer my sig_h_decon spirals to infinity
-    impulse_signal = np.zeros(sig_h.size*3)
-    impulse_signal[0] = 1
+    impulse_signal = np.zeros(sig_h.size//2)
+    impulse_signal[0] = 1000000
 
     plot(timeline(impulse_signal),
          impulse_signal, sample_sz=-1, title='impulse_signal')

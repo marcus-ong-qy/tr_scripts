@@ -60,16 +60,18 @@ if __name__ == '__main__':
     time = np.arange(0, DURATION, 1/RATE)
     chirp_data, inv = exp_chirp_and_inverse(time, f0, f1, a0, a1)
 
+    NOISE_PATH = 'oscilloscope/chirp/chirp_exp_100-2000_1-1_clip1'
+
     args_list = [
         {
             'sig_file_csv': 'oscilloscope/chirp/chirp1.Wfm.csv',
             'noise_file_csv': 'oscilloscope/noisesamp/sensornoise1.Wfm.csv',
-            'chirp_file_txt': 'oscilloscope/chirp/chirp_exp_100-2000_1-1_clip1'
+            'chirp_file_txt': NOISE_PATH
         },
         {
             'sig_file_csv': 'oscilloscope/chirp/chirp3.Wfm.csv',
             'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv',
-            'chirp_file_txt': 'oscilloscope/chirp/chirp_exp_100-2000_1-1_clip1'
+            'chirp_file_txt': NOISE_PATH
         },
     ]
 
