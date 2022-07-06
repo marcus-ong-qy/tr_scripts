@@ -14,6 +14,7 @@ from data_analysis import read_txt
 from oscilloscope_read_csv_to_txt import _process_suffix, csv2txt
 from ensure_filter_more_bigger_than_zero_everywhere \
     import ensure_filter_more_bigger_than_zero_everywhere
+from wiener_deconvolution_example import test_wiener
 
 
 def timeline(amplitude):
@@ -39,14 +40,14 @@ def decon_tr(
 
     # Cross-correlation h(t)
     sig_h = signal.correlate(sig_r, sig_s)
-    sig_h = np.pad(sig_h, (sig_h.size, sig_h.size))
+    # sig_h = np.pad(sig_h, (sig_h.size, sig_h.size))
     sig_h = ensure_filter_more_bigger_than_zero_everywhere(
         sig_h, threshold=0.001)
     log and print('\n\nsig_h:\n', sig_h)
 
     # # if this is more longer my sig_h_decon spirals to infinity
-    impulse_signal = np.zeros(sig_h.size//2)
-    impulse_signal[0] = 1000000
+    impulse_signal = np.zeros(sig_h.size)
+    impulse_signal[0] = 1
 
     plot(timeline(impulse_signal),
          impulse_signal, sample_sz=-1, title='impulse_signal')
@@ -73,14 +74,45 @@ def decon_tr(
              _rem, sample_sz=-1, title='_rem')
 
     data = reverse(sig_h_decon)
-
     write_to_txt(output_path, data)
 
+def decon_tr_wiener(chirp_path, sig_path, output_path=None,log=False):
+
+    chirp_path = _process_suffix(chirp_path, '.txt')
+    sig_path = _process_suffix(sig_path, '.txt')
+
+    if output_path is None:
+        output_path = f'{sig_path[:-4]}_decon_tr.txt'
+
+    # emitted signal s(t)
+    sig_s = read_txt(chirp_path)
+
+    # detected signal r(t)
+    sig_r = read_txt(sig_path)
+
+    # Cross-correlation h(t)
+    sig_h = signal.correlate(sig_r, sig_s)
+    # sig_h = np.pad(sig_h, (sig_h.size, sig_h.size))
+    sig_h = ensure_filter_more_bigger_than_zero_everywhere(
+        sig_h, threshold=0.001)
+    log and print('\n\nsig_h:\n', sig_h)
+
+    # # if this is more longer my sig_h_decon spirals to infinity
+    impulse_signal = np.zeros(sig_h.size)
+    impulse_signal[0] = 1
+
+    sig_h_decon = test_wiener(impulse_signal, sig_h)
+
+
+    data = reverse(sig_h_decon)
+    write_to_txt(output_path, data)
 
 if __name__ == '__main__':
     sig_file_txt = 'oscilloscope/chirp/chirp1.Wfm.txt'
     # noise_file_csv = 'oscilloscope/noisesamp/sensornoise1.Wfm.csv',
     chirp_file_txt = 'oscilloscope/chirp/chirp_exp_100-2000_1-1_clip1'
 
-    decon_tr(chirp_file_txt, sig_file_txt,
-             showPlot=True, log=True)
+    # decon_tr(chirp_file_txt, sig_file_txt,
+    #          showPlot=True, log=True)
+
+    decon_tr_wiener(chirp_file_txt, sig_file_txt, log=True)
