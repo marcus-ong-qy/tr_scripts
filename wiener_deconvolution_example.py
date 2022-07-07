@@ -55,17 +55,20 @@ def wiener_deconvolution(signal, kernel, lambd):
 	"lambd is the SNR"
 	kernel = np.hstack((kernel, np.zeros(len(signal) - len(kernel)))) # zero pad the kernel to same length
 	H = fft(kernel)
-	deconvolved = np.real(ifft(fft(signal)*np.conj(H)/(H*np.conj(H) + lambd**2)))
+	deconvolved = np.real(ifft(
+        fft(signal) * np.conj(H) /
+        (H*np.conj(H) + lambd**2) # TODO shouldn't it be (H*np.conj(H)*fft(signal) + lambd**2) ??
+    ))
 	return deconvolved
 
-def test_wiener(obs, ir):
+def test_wiener(obs, ir, lambd=lambd_est):
     # sonlen = son.size
     # irlen = ir.size
     obslen = obs.size
     # obs = np.convolve(son, ir, mode='full')
     # let's add some noise to the obs
     # obs += np.random.randn(*obs.shape) * lambd_est
-    son_est = wiener_deconvolution(obs, ir,  lambd=lambd_est)#[:sonlen]
+    son_est = wiener_deconvolution(obs, ir,  lambd=lambd)#[:sonlen]
     # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est)[:irlen]
     obs_est = np.convolve(son_est, ir, mode='full')#[:obslen]
 
@@ -95,11 +98,58 @@ def test_wiener(obs, ir):
     plt.plot(obs)
     plt.title("obs")
     #
+    plt.tight_layout()
     plt.show()
     #
     plt.close()
 
     return son_est
+
+def get_wiener(obs, ir, lambd):
+    son_est = wiener_deconvolution(obs, ir,  lambd=lambd)#[:sonlen]
+    # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est)[:irlen]
+    obs_est = np.convolve(son_est, ir, mode='full')#[:obslen]
+
+    return obs_est
+
+def get_wiener_error(obs, obs_est):
+    obs_len = len(obs)
+
+    if len(obs_est) != obs_len:
+        print(obs_len, len(obs_est))
+        return print('length don\'t same')
+
+    return np.sqrt(np.mean((obs - obs_est) ** 2))
+
+def compare_wieners(obs, ir, lambdas):
+    """
+    compares different lambda (SNR) values and see which produces the largest wiener
+    """
+    wieners = []
+    obs_sz = len(obs)
+    for l in lambdas:
+        obs_est = get_wiener(obs, ir, l)
+        wieners.append(obs_est[len(obs_est)-obs_sz+1:])
+
+    num_plots = len(lambdas)
+
+    # plot
+    plt.figure(frameon=False)
+
+    plt.subplot(num_plots+1,1,1)
+    plt.plot(obs)
+    plt.title(f'OG Wiener')
+
+    for i, est in enumerate(wieners):
+        error = get_wiener_error(obs[:-1], est)
+        plt.subplot(num_plots+1,1,i+2)
+        plt.plot(est)
+        plt.title(f'Wiener with λ={lambdas[i]}, error={error}')
+    #
+    plt.tight_layout()
+    plt.show()
+    #
+    plt.close()
 
 def sample():
     "simple test: get one soundtype and one impulse response, convolve them, deconvolve them, and check the result (plot it!)"
@@ -134,6 +184,7 @@ def sample():
     plt.plot(obs)
     plt.title("obs")
     #
+    plt.tight_layout()
     plt.show()
     #
     pdf.savefig()
