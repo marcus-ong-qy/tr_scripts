@@ -14,6 +14,7 @@ from data_analysis import read_txt
 from oscilloscope_read_csv_to_txt import _process_suffix, csv2txt
 from ensure_filter_more_bigger_than_zero_everywhere \
     import ensure_filter_more_bigger_than_zero_everywhere
+from skimage import restoration
 
 
 def timeline(amplitude):
@@ -39,21 +40,25 @@ def decon_tr(
 
     # Cross-correlation h(t)
     sig_h = signal.correlate(sig_r, sig_s)
-    sig_h = np.pad(sig_h, (sig_h.size, sig_h.size))
+    # sig_h = np.pad(sig_h, (sig_h.size, sig_h.size))
+    # sig_h += 1
     sig_h = ensure_filter_more_bigger_than_zero_everywhere(
         sig_h, threshold=0.001)
     log and print('\n\nsig_h:\n', sig_h)
 
-    # # if this is more longer my sig_h_decon spirals to infinity
-    impulse_signal = np.zeros(sig_h.size//2)
-    impulse_signal[0] = 1000000
+    # if this is more longer my sig_h_decon spirals to infinity
+    impulse_signal = np.zeros(sig_h.size)
+    impulse_signal[0] = 1
 
-    plot(timeline(impulse_signal),
-         impulse_signal, sample_sz=-1, title='impulse_signal')
+    plot(timeline(rfft(impulse_signal)),
+         rfft(impulse_signal), sample_sz=-1, title='impulse_signal')
 
     # inverse of H(f), H^(f)
-    sig_h_decon, _rem = signal.deconvolve(
+    # sig_h_decon, _rem = signal.deconvolve(
+    #     impulse_signal, sig_h)
+    sig_h_decon, _rem = restoration.unsupervised_wiener(
         impulse_signal, sig_h)
+
     log and print('\n\nsig_h_decon:\n', sig_h_decon)
     log and print('\n\n_rem:\n', _rem)
 
