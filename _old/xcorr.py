@@ -24,9 +24,9 @@ READ_PATH = 'oscilloscope/chirp/chirp3.Wfm_denoised.txt'
 CHIRP_SIG = chirp('exp', time, 100, 2000, 1, 1, clipThreshold=0.3)
 
 
-def xcorr(chirp_path, sig_path, output_path=None, showPlot=False, reverse=False):
+def xcorr(chirp, sig_path, output_path=None, showPlot=False, reverse=False):
 
-    chirp_path = _process_suffix(chirp_path, '.txt')
+    # chirp_path = _process_suffix(chirp_path, '.txt')
     sig_path = _process_suffix(sig_path, '.txt')
 
     if output_path is None:
@@ -34,7 +34,7 @@ def xcorr(chirp_path, sig_path, output_path=None, showPlot=False, reverse=False)
             else f'{sig_path[:-4]}_xcorr.txt'
 
     # emitted signal s(t)
-    sig_s = read_txt(chirp_path)
+    sig_s = chirp  # read_txt(chirp_path)
 
     # detected signal r(t)
     sig_r = read_txt(sig_path)

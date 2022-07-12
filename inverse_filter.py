@@ -6,12 +6,11 @@ https://dsp.stackexchange.com/questions/41696/calculating-the-inverse-filter-for
 
 from __future__ import division
 import numpy as np
-import scipy.signal as sig
-import matplotlib.pyplot as plt
 
 from scipy import signal
 from config import RATE, DURATION
-from wave_gen import plot, write_to_txt, norm, show_fft, reverse, exp_chirp_and_inverse
+from wave_gen import plot, write_to_txt, norm, show_fft, reverse, \
+    exp_chirp_and_inverse, timeline
 from data_analysis import read_txt
 from oscilloscope_read_csv_to_txt import _process_suffix
 
@@ -40,14 +39,49 @@ def dbfft(x, fs, win=None):
     return freq, s_dbfs
 
 
-time = np.arange(0, DURATION, 1/RATE)
+def xcorr_trad(
+        chirp, sig_path, output_path=None, showPlot=False):
+
+    # chirp_path = _process_suffix(chirp_path, '.txt')
+    sig_path = _process_suffix(sig_path, '.txt')
+
+    if output_path is None:
+        output_path = f'{sig_path[:-4]}_xcorr_trad.txt'
+
+    # emitted signal s(t)
+    sig_s = chirp  # read_txt(chirp_path)
+
+    # detected signal r(t)
+    sig_r = read_txt(sig_path)
+
+    # Cross-correlation h(t)
+    sig_h = signal.correlate(sig_r, sig_s)
+
+    # sig_y = signal.convolve(sig_h[::-1], sig_h)
+
+    if showPlot:
+        plot(timeline(sig_s), sig_s, sample_sz=-
+             1, title='xcorr_trad sig_s s(t)')
+
+        plot(timeline(sig_r), sig_r, sample_sz=-
+             1, title='xcorr_trad sig_r r(t)')
+        show_fft(sig_r, title="xcorr_trad sig_r")
+
+        plot(timeline(sig_h),
+             sig_h, sample_sz=-1, title='xcorr_trad sig_h h(t)')
+        # show_fft(sig_h, title="sig_h")
+
+        sig_y = norm(signal.correlate(sig_h, sig_h))
+
+        plot(timeline(sig_y),
+             sig_y, sample_sz=-1, title='xcorr_trad sig_y y(t)')
+
+    data = reverse(norm(sig_h))
+
+    write_to_txt(output_path, data)
 
 
-def timeline(amplitude):
-    return np.arange(0, DURATION*(len(amplitude)/time.size), 1/RATE)
-
-
-# I don't think so
+# It is more better because I use inv_chirp_data to convolve
 def xcorr_more_better(
         chirp_data, inv_chirp_data, sig_path,
         output_path=None, showPlot=False):
@@ -55,7 +89,7 @@ def xcorr_more_better(
     sig_path = _process_suffix(sig_path, '.txt')
 
     if output_path is None:
-        output_path = f'{sig_path[:-4]}_xcorr_more_better.txt'
+        output_path = f'{sig_path[:-4]}_xcorr.txt'
 
     # emitted signal s(t)
     sig_s, inv_sig_s = chirp_data, inv_chirp_data
@@ -66,19 +100,24 @@ def xcorr_more_better(
     # Convolution h(t)
     sig_h = signal.convolve(sig_r, inv_sig_s)
 
-    # sig_y = signal.convolve(sig_h[::-1], sig_h)
-
     if showPlot:
-        plot(timeline(sig_s), sig_s, sample_sz=-1, title='sig_s s(t)')
+        plot(timeline(sig_s), sig_s, sample_sz=-1,
+             title='xcorr_more_better sig_s s(t)')
         plot(timeline(inv_sig_s), inv_sig_s, sample_sz=-
-             1, title='inverse filter of s(t)')
+             1, title='xcorr_more_better inverse filter of s(t)')
 
-        plot(timeline(sig_r), sig_r, sample_sz=-1, title='sig_r r(t)')
-        show_fft(sig_r, title="sig_r")
+        plot(timeline(sig_r), sig_r, sample_sz=-1,
+             title='xcorr_more_better sig_r r(t)')
+        show_fft(sig_r, title="xcorr_more_better sig_r")
 
         plot(timeline(sig_h),
-             sig_h, sample_sz=-1, title='sig_h h(t)')
+             sig_h, sample_sz=-1, title='xcorr_more_better sig_h h(t)')
         # show_fft(sig_h, title="sig_h")
+
+        sig_y = norm(signal.correlate(sig_h, sig_h))
+
+        plot(timeline(sig_y),
+             sig_y, sample_sz=-1, title='xcorr_more_better sig_y y(t)')
 
     data = reverse(norm(sig_h))
 

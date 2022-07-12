@@ -56,7 +56,7 @@ def gen_ir(length):
     return son
 
 
-def wiener_deconvolution(signal, kernel, lambd):
+def wiener_deconvolution(signal, kernel, lambd, snip=False):
     "lambd is the SNR"
     # zero pad the kernel to same length
     kernel = np.hstack((kernel, np.zeros(len(signal) - len(kernel))))
@@ -66,32 +66,19 @@ def wiener_deconvolution(signal, kernel, lambd):
         # TODO shouldn't it be (H*np.conj(H)*fft(signal) + lambd**2) ??
         (H*np.conj(H) + lambd**2)
     ))
+    if snip:
+        deconvolved = deconvolved[1*deconvolved.size//3:2*deconvolved.size//3]
     return deconvolved
 
 
-def test_wiener(obs, ir, lambd=lambd_est):
-    # sonlen = son.size
-    # irlen = ir.size
-    obslen = obs.size
-    # obs = np.convolve(son, ir, mode='full')
-    # let's add some noise to the obs
-    # obs += np.random.randn(*obs.shape) * lambd_est
-    son_est = wiener_deconvolution(obs, ir,  lambd=lambd)  # [:sonlen]
-    # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est)[:irlen]
+def test_wiener(obs, ir, lambd=lambd_est, snip=False):
+    son_est = wiener_deconvolution(
+        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen]
     obs_est = np.convolve(son_est, ir, mode='full')  # [:obslen]
-
-    # # calc error
-    # obs_err = np.sqrt(np.mean((obs - obs_est) ** 2))
-    # # son_err = np.sqrt(np.mean((son - son_est) ** 2))
-    # # ir_err  = np.sqrt(np.mean((ir  -  ir_est) ** 2))
-    # print("single_example_test(): RMS errors obs %g" % (obs_err))
 
     # plot
     plt.figure(frameon=False)
-    #
-    # plt.subplot(3,2,1)
-    # plt.plot(son)
-    # plt.title("son")
+
     plt.subplot(3, 2, 3)
     plt.plot(son_est)
     plt.title("son_est")
@@ -113,8 +100,9 @@ def test_wiener(obs, ir, lambd=lambd_est):
     return son_est
 
 
-def get_wiener(obs, ir, lambd):
-    son_est = wiener_deconvolution(obs, ir,  lambd=lambd)  # [:sonlen]
+def get_wiener(obs, ir, lambd, snip=False):
+    son_est = wiener_deconvolution(
+        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen]
     # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est)[:irlen]
     obs_est = np.convolve(son_est, ir, mode='full')  # [:obslen]
 
@@ -134,11 +122,12 @@ def get_wiener_error(obs, obs_est):
 def compare_wieners(obs, ir, lambdas):
     """
     compares different lambda (SNR) values and see which produces the largest wiener
+
     """
     wieners = []
     obs_sz = len(obs)
     for l in lambdas:
-        obs_est = get_wiener(obs, ir, l)
+        obs_est = get_wiener(obs, ir, l, snip=False)
         wieners.append(obs_est[len(obs_est)-obs_sz+1:])
 
     num_plots = len(lambdas)
@@ -151,6 +140,7 @@ def compare_wieners(obs, ir, lambdas):
     plt.title('OG Wiener')
 
     for i, est in enumerate(wieners):
+        # TODO perhaps use temporal_quality?
         error = get_wiener_error(obs[:-1], est)
         plt.subplot(num_plots+1, 1, i+2)
         plt.plot(est)

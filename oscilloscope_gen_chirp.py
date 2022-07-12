@@ -10,7 +10,7 @@ from wave_gen import chirp, write_to_txt
 
 type_ = 'exp'
 f0 = 100
-f1 = 2000
+f1 = 4000
 a0 = 1
 a1 = 1
 # clip_thresh = 0.7 ## NOT SUPPOSED TO CLIP

@@ -9,14 +9,13 @@ import os
 import numpy as np
 from oscilloscope_read_csv_to_txt import csv2txt
 from remove_noise import remove_noise
-from xcorr import xcorr
-from decon_tr_fflip import decon_tr_fflip
+# from xcorr import xcorr
 from wave_gen import exp_chirp_and_inverse
 from config import RATE, DURATION
-from inverse_filter import xcorr_more_better
+from inverse_filter import xcorr_more_better, xcorr_trad
 
 
-def main_xcorr(sig_file_csv, noise_file_csv, chirp_file_txt, plot=False):
+def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp, plot=False):
     sig_file_txt = csv2txt(sig_file_csv)
     noise_file_txt = csv2txt(noise_file_csv)
 
@@ -24,27 +23,8 @@ def main_xcorr(sig_file_csv, noise_file_csv, chirp_file_txt, plot=False):
     if not os.path.exists(sig_file_txt_denoised):
         remove_noise(sig_file_txt, noise_file_txt, plot=plot)
 
-    xcorr(chirp_file_txt, sig_file_txt, showPlot=plot, reverse=True)
-
-    xcorr(chirp_file_txt, sig_file_txt_denoised, showPlot=plot, reverse=True)
-
-    # data_analysis(txt_file_denoised, xlim=[0, 1000], ylim=[0, 200])
-
-
-def main_decon(sig_file_csv, noise_file_csv, chirp_file_txt, plot=False):
-    sig_file_txt = csv2txt(sig_file_csv)
-    noise_file_txt = csv2txt(noise_file_csv)
-
-    sig_file_txt_denoised = f'{sig_file_txt[:-4]}_denoised.txt'
-    if not os.path.exists(sig_file_txt_denoised):
-        remove_noise(sig_file_txt, noise_file_txt, plot=plot)
-
-    decon_tr_fflip(chirp_file_txt, sig_file_txt,
-                   showPlot=plot, reverse=True)
-    decon_tr_fflip(chirp_file_txt, sig_file_txt_denoised,
-                   showPlot=plot, reverse=True)
-
-# data_analysis(txt_file_denoised, xlim=[0, 1000], ylim=[0, 200])
+    xcorr_trad(chirp, sig_file_txt_denoised, showPlot=plot)
+    xcorr_more_better(chirp, inv, sig_file_txt_denoised, showPlot=plot)
 
 
 if __name__ == '__main__':
@@ -66,24 +46,16 @@ if __name__ == '__main__':
         {
             'sig_file_csv': 'oscilloscope/chirp/chirp1.Wfm.csv',
             'noise_file_csv': 'oscilloscope/noisesamp/sensornoise1.Wfm.csv',
-            'chirp_file_txt': NOISE_PATH
+            'chirp': chirp_data,
+            'inv_chirp': inv
         },
-        {
-            'sig_file_csv': 'oscilloscope/chirp/chirp3.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv',
-            'chirp_file_txt': NOISE_PATH
-        },
-    ]
-
-    more_better_signal_paths = [
-        'oscilloscope/chirp/chirp1.Wfm_denoised.txt',
-        'oscilloscope/chirp/chirp3.Wfm_denoised.txt'
+        # {
+        #     'sig_file_csv': 'oscilloscope/chirp/chirp3.Wfm.csv',
+        #     'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv',
+        #     'chirp': chirp_data,
+        #     'inv_chirp': inv
+        # },
     ]
 
     for args in args_list:
-        main_xcorr(**args, plot=False)
-        # main_decon(**args, plot=False)
-
-    for path in more_better_signal_paths:
-        xcorr_more_better(
-            chirp_data, inv, path, showPlot=False)
+        main_xcorr(**args, plot=0)

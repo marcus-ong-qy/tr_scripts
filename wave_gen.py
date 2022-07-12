@@ -255,3 +255,12 @@ if __name__ == '__main__':
 
     plot(time, chirp_data)
     plot(time, inv)
+
+
+def timeline(amplitude):
+    """
+    Creates an array, given y axis values,
+    produces x axis (time )values for plotting based on DURATION and RATE
+    """
+    time = np.arange(0, DURATION, 1/RATE)
+    return np.arange(0, DURATION*(len(amplitude)/time.size), 1/RATE)
