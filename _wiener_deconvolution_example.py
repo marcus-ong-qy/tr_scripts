@@ -5,13 +5,10 @@
 # https://gist.github.com/danstowell/f2d81a897df9e23cc1da
 
 import numpy as np
-from numpy.fft import fft, ifft, ifftshift
-
-import matplotlib
-# matplotlib.use('PDF') # http://www.astrobetter.com/plotting-to-a-file-in-python/
+from numpy.fft import fft, ifft  # , ifftshift
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-from matplotlib.backends.backend_pdf import PdfPages
+# import matplotlib.cm as cm
+from temporal_quality import temporal_quality
 plt.rcParams.update({'font.size': 6})
 
 ##########################
@@ -121,14 +118,15 @@ def get_wiener_error(obs, obs_est):
 
 def compare_wieners(obs, ir, lambdas):
     """
-    compares different lambda (SNR) values and see which produces the largest wiener
-
+    compares different lambda (SNR) values and see which produces the largest
+    wiener
     """
     wieners = []
-    obs_sz = len(obs)
-    for l in lambdas:
-        obs_est = get_wiener(obs, ir, l, snip=False)
-        wieners.append(obs_est[len(obs_est)-obs_sz+1:])
+    # obs_sz = len(obs)
+    for lm in lambdas:
+        obs_est = get_wiener(obs, ir, lm, snip=False)
+        wieners.append(obs_est  # [len(obs_est)-obs_sz+1:]
+                       )
 
     num_plots = len(lambdas)
 
@@ -141,10 +139,11 @@ def compare_wieners(obs, ir, lambdas):
 
     for i, est in enumerate(wieners):
         # TODO perhaps use temporal_quality?
-        error = get_wiener_error(obs[:-1], est)
+        # error = get_wiener_error(obs[:-1], est)
+        tq = temporal_quality(est)
         plt.subplot(num_plots+1, 1, i+2)
         plt.plot(est)
-        plt.title(f'Wiener with λ={lambdas[i]}, error={error}')
+        plt.title(f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
     #
     plt.tight_layout()
     plt.show()
@@ -153,7 +152,10 @@ def compare_wieners(obs, ir, lambdas):
 
 
 def sample():
-    "simple test: get one soundtype and one impulse response, convolve them, deconvolve them, and check the result (plot it!)"
+    """
+    simple test: get one soundtype and one impulse response, convolve them,
+    deconvolve them, and check the result (plot it!)
+    """
     son = gen_son(sonlen)
     ir = gen_ir(irlen)
     obs = np.convolve(son, ir, mode='full')
@@ -164,9 +166,10 @@ def sample():
     # calc error
     son_err = np.sqrt(np.mean((son - son_est) ** 2))
     ir_err = np.sqrt(np.mean((ir - ir_est) ** 2))
-    print("single_example_test(): RMS errors son %g, IR %g" % (son_err, ir_err))
+    print(
+        "single_example_test(): RMS errors son %g, IR %g" % (son_err, ir_err))
+
     # plot
-    pdf = PdfPages('wiener_deconvolution_example.pdf')
     plt.figure(frameon=False)
     #
     plt.subplot(3, 2, 1)
@@ -188,9 +191,7 @@ def sample():
     plt.tight_layout()
     plt.show()
     #
-    pdf.savefig()
     plt.close()
-    pdf.close()
 
 
 if __name__ == '__main__':

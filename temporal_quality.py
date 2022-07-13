@@ -15,7 +15,7 @@ def temporal_quality(data):
     measures the temporal quality of the result, as detailed in 
     https://doi.org/10.1121/10.0009364, formula (4) (page 742)
     """
-    data = norm(data)
+    # data = norm(data)
     A_p = np.max(data)  # peak amplitude
     M = data.size  # number of samples
 
@@ -33,10 +33,10 @@ def eval_temporal_quality(path):
 
     print('Temporal quality Report')
     print('for file:', path)
-    print('E_T = ', data)
+    print('E_T = ', et)
 
 
 if __name__ == '__main__':
-    paths = []
+    paths = ['oscilloscope/chirp/chirp1.Wfm_denoised_xcorr_decon_wiener']
     for path in paths:
         eval_temporal_quality(path)

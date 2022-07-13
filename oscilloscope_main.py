@@ -9,10 +9,9 @@ import os
 import numpy as np
 from oscilloscope_read_csv_to_txt import csv2txt
 from remove_noise import remove_noise
-# from xcorr import xcorr
 from wave_gen import exp_chirp_and_inverse
 from config import RATE, DURATION
-from inverse_filter import xcorr_more_better, xcorr_trad
+from inverse_filter import xcorr  # , xcorr_old
 
 
 def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp, plot=False):
@@ -23,8 +22,8 @@ def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp, plot=False):
     if not os.path.exists(sig_file_txt_denoised):
         remove_noise(sig_file_txt, noise_file_txt, plot=plot)
 
-    xcorr_trad(chirp, sig_file_txt_denoised, showPlot=plot)
-    xcorr_more_better(chirp, inv, sig_file_txt_denoised, showPlot=plot)
+    # xcorr_old(chirp, sig_file_txt_denoised, showPlot=plot)
+    xcorr(chirp, inv, sig_file_txt_denoised, showPlot=plot)
 
 
 if __name__ == '__main__':
@@ -49,13 +48,13 @@ if __name__ == '__main__':
             'chirp': chirp_data,
             'inv_chirp': inv
         },
-        # {
-        #     'sig_file_csv': 'oscilloscope/chirp/chirp3.Wfm.csv',
-        #     'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv',
-        #     'chirp': chirp_data,
-        #     'inv_chirp': inv
-        # },
+        {
+            'sig_file_csv': 'oscilloscope/chirp/chirp3.Wfm.csv',
+            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv',
+            'chirp': chirp_data,
+            'inv_chirp': inv
+        },
     ]
 
     for args in args_list:
-        main_xcorr(**args, plot=0)
+        main_xcorr(**args, plot=1)

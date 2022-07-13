@@ -5,7 +5,6 @@ from _denoise import removeNoise
 from scipy import signal
 from scipy.fft import irfft
 from wave_gen import write_to_txt, get_fft, display_fft
-from oscilloscope_read_csv_to_txt import _process_suffix
 
 
 def threshold_filter(xf, yf, threshold, scale=0):
@@ -50,9 +49,6 @@ SIG_PATH = 'oscilloscope/chirp/chirp1.Wfm'
 
 
 def remove_noise(sig_path, noise_path, plot=True, xlim=None, ylim=None):
-    noise_path = _process_suffix(noise_path, '.txt')
-    sig_path = _process_suffix(sig_path, '.txt')
-
     noise = read_txt(noise_path)
     sig = read_txt(sig_path)
 
@@ -87,4 +83,4 @@ def remove_noise(sig_path, noise_path, plot=True, xlim=None, ylim=None):
 
 
 if __name__ == '__main__':
-    remove_noise(SIG_PATH, NOISE_PATH, xlim=[0, 1000], ylim=[0, 200])
+    remove_noise(SIG_PATH, NOISE_PATH, xlim=[0, 2000], ylim=[0, 200])

@@ -8,10 +8,12 @@ Created on Thu Jun  9 14:43:11 2022
 import numpy as np
 from config import RATE
 from wave_gen import show_fft, get_fft
+from oscilloscope_read_csv_to_txt import _process_suffix
 
 
 def read_txt(filename):
-    with open(f'{filename.replace(".txt", "")}.txt', 'r') as f:
+    filename = _process_suffix(filename, '.txt')
+    with open(filename, 'r') as f:
         data_arr = f.read().split()
         data = np.array(list(map(float, list(data_arr))))
 

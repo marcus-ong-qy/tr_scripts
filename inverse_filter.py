@@ -39,14 +39,14 @@ def dbfft(x, fs, win=None):
     return freq, s_dbfs
 
 
-def xcorr_trad(
+def xcorr_old(
         chirp, sig_path, output_path=None, showPlot=False):
 
     # chirp_path = _process_suffix(chirp_path, '.txt')
     sig_path = _process_suffix(sig_path, '.txt')
 
     if output_path is None:
-        output_path = f'{sig_path[:-4]}_xcorr_trad.txt'
+        output_path = f'{sig_path[:-4]}_xcorr_old.txt'
 
     # emitted signal s(t)
     sig_s = chirp  # read_txt(chirp_path)
@@ -82,7 +82,7 @@ def xcorr_trad(
 
 
 # It is more better because I use inv_chirp_data to convolve
-def xcorr_more_better(
+def xcorr(
         chirp_data, inv_chirp_data, sig_path,
         output_path=None, showPlot=False):
 
