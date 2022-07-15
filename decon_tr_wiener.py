@@ -14,7 +14,7 @@ from _wiener_deconvolution_example import compare_wieners, test_wiener
 
 
 def decon_tr_wiener(
-        chirp_path, sig_h_path, output_path=None,
+        chirp_path, sig_h_path, lambd, output_path=None,
         log=False, write=False, snip=False):
 
     chirp_path = _process_suffix(chirp_path, '.txt')
@@ -29,7 +29,7 @@ def decon_tr_wiener(
     for i in range(1):
         impulse_signal[i] = 1
 
-    sig_h_decon = test_wiener(impulse_signal, sig_h, lambd=1, snip=snip)
+    sig_h_decon = test_wiener(impulse_signal, sig_h, lambd=lambd, snip=snip)
 
     if write:
         # TODO implement Audacity's Normalize instead
@@ -55,16 +55,16 @@ if __name__ == '__main__':
     chirp_file_txt = 'oscilloscope/chirp/chirp_exp_100-2000_1-1_clip1'
 
     sig_h_args_list = [
-        'oscilloscope/chirp/chirp1.Wfm_denoised_xcorr',
+        # 'oscilloscope/chirp/chirp1.Wfm_denoised_xcorr',
         'oscilloscope/chirp/chirp3.Wfm_denoised_xcorr'
     ]
 
     for sig_h_file_txt in sig_h_args_list:
-        decon_tr_wiener(
-            chirp_file_txt, sig_h_file_txt, log=True, write=1, snip=0)
+        # decon_tr_wiener(
+        #     chirp_file_txt, sig_h_file_txt, 3.5, log=True, write=1, snip=0)
 
-        # decon_compare_wieners(chirp_file_txt, sig_h_file_txt, [
-        #     1,
-        #     0.99,
-        #     0.9,
-        # ])
+        decon_compare_wieners(chirp_file_txt, sig_h_file_txt, [
+            3.3,
+            3.5,
+            3.7,
+        ])

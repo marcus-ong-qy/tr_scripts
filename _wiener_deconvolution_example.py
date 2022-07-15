@@ -140,10 +140,11 @@ def compare_wieners(obs, ir, lambdas):
     for i, est in enumerate(wieners):
         # TODO perhaps use temporal_quality?
         # error = get_wiener_error(obs[:-1], est)
-        tq = temporal_quality(est)
+        peak, tq = temporal_quality(est)
         plt.subplot(num_plots+1, 1, i+2)
         plt.plot(est)
-        plt.title(f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
+        plt.title(
+            f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
     #
     plt.tight_layout()
     plt.show()

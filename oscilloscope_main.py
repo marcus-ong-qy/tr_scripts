@@ -11,7 +11,7 @@ from oscilloscope_read_csv_to_txt import csv2txt
 from remove_noise import remove_noise
 from wave_gen import exp_chirp_and_inverse
 from config import RATE, DURATION
-from inverse_filter import xcorr  # , xcorr_old
+from inverse_filter import xcorr
 
 
 def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp, plot=False):
@@ -22,8 +22,7 @@ def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp, plot=False):
     if not os.path.exists(sig_file_txt_denoised):
         remove_noise(sig_file_txt, noise_file_txt, plot=plot)
 
-    # xcorr_old(chirp, sig_file_txt_denoised, showPlot=plot)
-    xcorr(chirp, inv, sig_file_txt_denoised, showPlot=plot)
+    xcorr(chirp, inv_chirp, sig_file_txt_denoised, showPlot=plot)
 
 
 if __name__ == '__main__':
@@ -57,4 +56,4 @@ if __name__ == '__main__':
     ]
 
     for args in args_list:
-        main_xcorr(**args, plot=1)
+        main_xcorr(**args, plot=0)
