@@ -116,7 +116,7 @@ def get_wiener_error(obs, obs_est):
     return np.sqrt(np.mean((obs - obs_est) ** 2))
 
 
-def compare_wieners(obs, ir, lambdas):
+def compare_wieners(obs, ir, lambdas, logMode='plot'):
     """
     compares different lambda (SNR) values and see which produces the largest
     wiener
@@ -130,26 +130,100 @@ def compare_wieners(obs, ir, lambdas):
 
     num_plots = len(lambdas)
 
-    # plot
-    plt.figure(frameon=False)
+    if logMode == 'plot':
+        # plot
+        plt.figure(frameon=False)
 
-    plt.subplot(num_plots+1, 1, 1)
-    plt.plot(obs)
-    plt.title('OG Wiener')
+        plt.subplot(num_plots+1, 1, 1)
+        plt.plot(obs)
+        plt.title('OG Wiener')
 
     for i, est in enumerate(wieners):
-        # TODO perhaps use temporal_quality?
-        # error = get_wiener_error(obs[:-1], est)
         peak, tq = temporal_quality(est)
-        plt.subplot(num_plots+1, 1, i+2)
-        plt.plot(est)
-        plt.title(
-            f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
-    #
-    plt.tight_layout()
-    plt.show()
-    #
-    plt.close()
+
+        if logMode == 'plot':
+            plt.subplot(num_plots+1, 1, i+2)
+            plt.plot(est)
+            plt.title(
+                f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
+        elif logMode == 'print':
+            print(f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
+
+    if logMode == 'plot':
+        #
+        plt.tight_layout()
+        plt.show()
+        #
+        plt.close()
+
+
+def get_best_wiener(ir, lambdas, verbose=False):
+    """
+    given an array of lambdas, assuming a singular maximum peak,
+    find the lambda that produces the best temporal quality
+    when unit impulse is deconvolved by given impulse response
+
+    """
+    def print_result(lm, tq=None):
+        if tq is None:
+            est = get_wiener(delta, ir, lm, snip=False)
+            _, tq = temporal_quality(est)
+        print(f'===\nThe best Lambda is {lm}, which yields tq={tq}\n===')
+
+    delta = np.zeros(ir.size)
+    delta[0] = 1
+
+    if len(lambdas) == 1:
+        print_result(lambdas[0])
+        return lambdas[0]
+
+    if len(lambdas) == 2:
+        left_est = get_wiener(delta, ir, delta[0], snip=False)
+        right_est = get_wiener(delta, ir, delta[1], snip=False)
+
+        _, left_tq = temporal_quality(left_est)
+        _, right_tq = temporal_quality(right_est)
+
+        result = lambdas[0] if left_tq > right_tq else lambdas[1]
+        print_result(result)
+
+        return result
+
+    seg = lambdas
+
+    while len(seg) > 0:
+        ptr = len(seg)//2
+
+        left_seg = seg[0:ptr]
+        right_seg = seg[ptr+1:len(seg)]
+
+        if len(left_seg) == 0 or len(right_seg) == 0:
+            result = seg[ptr]
+            print_result(result)
+            return result
+
+        left_est = get_wiener(delta, ir, seg[ptr-1], snip=False)
+        mid_est = get_wiener(delta, ir, seg[ptr], snip=False)
+        right_est = get_wiener(delta, ir, seg[ptr+1], snip=False)
+        _, left_tq = temporal_quality(left_est)
+        _, mid_tq = temporal_quality(mid_est)
+        _, right_tq = temporal_quality(right_est)
+
+        max_tq = max(left_tq, mid_tq, right_tq)
+        if max_tq == mid_tq:
+            verbose and print('max is mid', left_tq, mid_tq, right_tq)
+            result = seg[ptr]
+            print_result(result, mid_tq)
+            return result
+
+        elif max_tq == left_tq:
+            verbose and print('max is left', left_tq, mid_tq, right_tq)
+            seg = left_seg
+        else:
+            verbose and print('max is right', left_tq, mid_tq, right_tq)
+            seg = right_seg
+
+        verbose and print(f'Search length remaining: {len(seg)}')
 
 
 def sample():
