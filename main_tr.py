@@ -37,14 +37,14 @@ if __name__ == '__main__':
 
     args_list = [
         {
-            'sig_file_csv': 'oscilloscope/chirp/chirp1.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise1.Wfm.csv',
+            'sig_file_csv': 'signal_data/response/rt1.Wfm.csv',
+            'noise_file_csv': 'signal_data/noisesamp/sensornoise1.Wfm.csv',
             'chirp': chirp_data,
             'inv_chirp': inv
         },
         {
-            'sig_file_csv': 'oscilloscope/chirp/chirp3.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv',
+            'sig_file_csv': 'signal_data/response/rt3.Wfm.csv',
+            'noise_file_csv': 'signal_data/noisesamp/sensornoise3.Wfm.csv',
             'chirp': chirp_data,
             'inv_chirp': inv
         },

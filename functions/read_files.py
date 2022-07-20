@@ -8,7 +8,7 @@ Created on Thu Jun 23 12:54:51 2022
 import csv
 import numpy as np
 
-CSV_FILE = 'oscilloscope/noisesamp/sensornoise3.Wfm.csv'
+CSV_FILE = 'signal_data/noisesamp/sensornoise3.Wfm.csv'
 
 
 def _process_suffix(path, suffix):

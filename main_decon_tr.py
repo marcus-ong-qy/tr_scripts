@@ -65,8 +65,8 @@ def decon_get_best_wiener(sig_h_path, lambdas,
 if __name__ == '__main__':
     # make sure you run main_tr first to generate these files
     sig_h_args_list = [
-        'oscilloscope/chirp/chirp1.Wfm_denoised_xcorr.txt',
-        'oscilloscope/chirp/chirp3.Wfm_denoised_xcorr.txt'
+        'signal_data/response/rt1.Wfm_denoised_xcorr.txt',
+        'signal_data/response/rt3.Wfm_denoised_xcorr.txt'
     ]
 
     for sig_h_file_txt in sig_h_args_list:

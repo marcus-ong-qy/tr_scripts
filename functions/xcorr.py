@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     chirp_data, inv = exp_chirp_and_inverse(time, f0, f1, a0, a1)
 
-    READ_PATH = 'oscilloscope/chirp/chirp1.Wfm'
+    READ_PATH = 'signal_data/response/rt1.Wfm'
 
     sig_r = read_osc_csv(READ_PATH)
 

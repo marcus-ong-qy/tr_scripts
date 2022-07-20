@@ -55,20 +55,20 @@ def eval_temporal_quality(path_file_csv, noise_file_csv, highpassCutoff=None):
 if __name__ == '__main__':
     args = [
         {
-            'path_file_csv': 'oscilloscope/foci/focus1_trad.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise1.Wfm.csv'
+            'path_file_csv': 'signal_data/focus/focus1_trad.Wfm.csv',
+            'noise_file_csv': 'signal_data/noisesamp/sensornoise1.Wfm.csv'
         },
         {
-            'path_file_csv': 'oscilloscope/foci/focus1_decon.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise1.Wfm.csv'
+            'path_file_csv': 'signal_data/focus/focus1_decon.Wfm.csv',
+            'noise_file_csv': 'signal_data/noisesamp/sensornoise1.Wfm.csv'
         },
         {
-            'path_file_csv': 'oscilloscope/foci/focus3_trad.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv'
+            'path_file_csv': 'signal_data/focus/focus3_trad.Wfm.csv',
+            'noise_file_csv': 'signal_data/noisesamp/sensornoise3.Wfm.csv'
         },
         {
-            'path_file_csv': 'oscilloscope/foci/focus3_decon.Wfm.csv',
-            'noise_file_csv': 'oscilloscope/noisesamp/sensornoise3.Wfm.csv'
+            'path_file_csv': 'signal_data/focus/focus3_decon.Wfm.csv',
+            'noise_file_csv': 'signal_data/noisesamp/sensornoise3.Wfm.csv'
         },
     ]
 

@@ -25,6 +25,6 @@ amplitude = chirp(type_, time,
 
 show_fft(amplitude, title="chirp", xlim=[0, 2500], ylim=[0, 600])
 
-PATH = f'oscilloscope/chirp/chirp_{type_}_{DURATION}s_{f0}-{f1}_{a0}-{a1}'
+PATH = f'signal_data/chirp/chirp_{type_}_{DURATION}s_{f0}-{f1}_{a0}-{a1}'
 
 write_to_txt(PATH, amplitude)

@@ -104,8 +104,8 @@ def remove_noise(sig, noise, highpassCutoff=None, writeToPath=None,
 
 
 if __name__ == '__main__':
-    NOISE_PATH = 'oscilloscope/noisesamp/sensornoise1.Wfm'
-    SIG_PATH = 'oscilloscope/chirp/chirp1.Wfm'
+    NOISE_PATH = 'signal_data/noisesamp/sensornoise1.Wfm'
+    SIG_PATH = 'signal_data/response/rt1.Wfm'
 
     remove_noise_csv(SIG_PATH, NOISE_PATH, highpassCutoff=200,
                      xlim=[0, 200], ylim=[0, 200])
