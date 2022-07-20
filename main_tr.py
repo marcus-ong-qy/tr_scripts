@@ -5,24 +5,21 @@ Created on Fri Jun 24 09:33:54 2022
 @author: OQinYuan
 """
 
-import os
 import numpy as np
-from oscilloscope_read_csv_to_txt import csv2txt
-from remove_noise import remove_noise
-from wave_gen import exp_chirp_and_inverse
 from config import RATE, DURATION
-from inverse_filter import xcorr
+from functions.remove_noise import remove_noise_csv
+from functions.wave_gen import exp_chirp_and_inverse
+from functions.xcorr import xcorr
 
 
-def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp, plot=False):
-    sig_file_txt = csv2txt(sig_file_csv)
-    noise_file_txt = csv2txt(noise_file_csv)
-
-    sig_file_txt_denoised = f'{sig_file_txt[:-4]}_denoised.txt'
-    if not os.path.exists(sig_file_txt_denoised):
-        remove_noise(sig_file_txt, noise_file_txt, plot=plot)
-
-    xcorr(chirp, inv_chirp, sig_file_txt_denoised, showPlot=plot)
+def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp,
+               highpassCutoff=None, plot=False):
+    sig_r = remove_noise_csv(sig_file_csv, noise_file_csv,
+                             highpassCutoff=highpassCutoff,
+                             plot=plot, write=False)
+    xcorr_path = f'{sig_file_csv[:-4]}_denoised_xcorr.txt'
+    xcorr(chirp, inv_chirp, sig_r,
+          output_path=xcorr_path, showPlot=plot)
 
 
 if __name__ == '__main__':
@@ -37,8 +34,6 @@ if __name__ == '__main__':
 
     time = np.arange(0, DURATION, 1/RATE)
     chirp_data, inv = exp_chirp_and_inverse(time, f0, f1, a0, a1)
-
-    NOISE_PATH = 'oscilloscope/chirp/chirp_exp_100-2000_1-1_clip1'
 
     args_list = [
         {
@@ -56,4 +51,4 @@ if __name__ == '__main__':
     ]
 
     for args in args_list:
-        main_xcorr(**args, plot=0)
+        main_xcorr(**args, highpassCutoff=2*f0, plot=1)

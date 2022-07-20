@@ -10,9 +10,9 @@ from scipy import signal
 from scipy.fft import rfft, irfft
 from config import RATE, DURATION
 from fflip import fflip
-from wave_gen import plot, write_to_txt, norm, show_fft, reverse as tr
+from functions.wave_gen import plot, write_to_txt, norm, show_fft, reverse as tr
 from data_analysis import read_txt
-from oscilloscope_read_csv_to_txt import _process_suffix, csv2txt
+from functions.read_files import _process_suffix, csv2txt
 
 
 def timeline(amplitude):

@@ -8,7 +8,7 @@ Created on Thu May 19 17:53:42 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import rfft, rfftfreq, fft, fftfreq
-# import random
+
 from config import RATE, DURATION
 
 
@@ -232,6 +232,15 @@ def write_to_txt(filename, data):
             f.write('{:.4f} '.format(value))
 
 
+def timeline(amplitude):
+    """
+    Creates an array, given y axis values,
+    produces x axis (time) values for plotting based on DURATION and RATE
+    """
+    time = np.arange(0, DURATION, 1/RATE)
+    return np.arange(0, DURATION*(len(amplitude)/time.size), 1/RATE)
+
+
 if __name__ == '__main__':
     f0 = 100  # start frequency (Hz)
     f1 = 2000  # end frequency (Hz)
@@ -247,9 +256,6 @@ if __name__ == '__main__':
     CHOICE = 1
 
     time = np.arange(0, DURATION, 1/RATE)
-    # amplitude = chirp(CHIRP_TYPES[CHOICE], time,
-    #                   f0, f1, a0, a1, clipThreshold=clipThreshold)
-    # write_to_txt('wave_gen', amplitude)
 
     chirp_data, inv = exp_chirp_and_inverse(time, f0, f1, a0, a1)
 
@@ -257,10 +263,3 @@ if __name__ == '__main__':
     plot(time, inv)
 
 
-def timeline(amplitude):
-    """
-    Creates an array, given y axis values,
-    produces x axis (time )values for plotting based on DURATION and RATE
-    """
-    time = np.arange(0, DURATION, 1/RATE)
-    return np.arange(0, DURATION*(len(amplitude)/time.size), 1/RATE)

@@ -9,9 +9,9 @@ import numpy as np
 from scipy import signal
 from scipy.fft import rfft
 from config import RATE, DURATION
-from wave_gen import plot, write_to_txt,  show_fft, reverse
+from functions.wave_gen import plot, write_to_txt,  show_fft, reverse
 from data_analysis import read_txt
-from oscilloscope_read_csv_to_txt import _process_suffix
+from functions.read_files import _process_suffix
 from ensure_filter_more_bigger_than_zero_everywhere \
     import ensure_filter_more_bigger_than_zero_everywhere
 from skimage import restoration

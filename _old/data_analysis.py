@@ -7,8 +7,8 @@ Created on Thu Jun  9 14:43:11 2022
 
 import numpy as np
 from config import RATE
-from wave_gen import show_fft, get_fft
-from oscilloscope_read_csv_to_txt import _process_suffix
+from functions.wave_gen import show_fft, get_fft
+from functions.read_files import _process_suffix
 
 
 def read_txt(filename):

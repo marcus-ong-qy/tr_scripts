@@ -8,7 +8,7 @@ Created on Tue May 24 14:52:48 2022
 import numpy as np
 from scipy import signal
 from config import RATE, DURATION
-from wave_gen import chirp, plot, gauss_noise, show_fft
+from functions.wave_gen import chirp, plot, gauss_noise, show_fft
 
 
 time = np.arange(0, DURATION, 1/RATE)

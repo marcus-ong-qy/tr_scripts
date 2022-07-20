@@ -10,7 +10,7 @@ import numpy as np
 # import matplotlib.pyplot as plt
 from scipy import signal
 from data_analysis import read_txt
-from wave_gen import chirp, plot, show_fft, norm
+from functions.wave_gen import chirp, plot, show_fft, norm
 
 
 def timeline(amplitude):

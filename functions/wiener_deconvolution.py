@@ -5,18 +5,17 @@
 # https://gist.github.com/danstowell/f2d81a897df9e23cc1da
 
 import numpy as np
-from numpy.fft import fft, ifft  # , ifftshift
+from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
-# import matplotlib.cm as cm
 from temporal_quality import temporal_quality
 plt.rcParams.update({'font.size': 6})
 
 ##########################
-# user config
-sonlen = 128
-irlen = 64
+# default values
+sonlen_default = 128
+irlen_default = 64
 
-lambd_est = 1e-3  # estimated noise lev
+lambd_est_default = 1e-3  # estimated noise lev
 
 ##########################
 
@@ -68,9 +67,9 @@ def wiener_deconvolution(signal, kernel, lambd, snip=False):
     return deconvolved
 
 
-def test_wiener(obs, ir, lambd=lambd_est, snip=False):
+def test_wiener(obs, ir, lambd=lambd_est_default, snip=False):
     son_est = wiener_deconvolution(
-        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen]
+        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen_default]
     obs_est = np.convolve(son_est, ir, mode='full')  # [:obslen]
 
     # plot
@@ -99,8 +98,8 @@ def test_wiener(obs, ir, lambd=lambd_est, snip=False):
 
 def get_wiener(obs, ir, lambd, snip=False):
     son_est = wiener_deconvolution(
-        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen]
-    # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est)[:irlen]
+        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen_default]
+    # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est_default)[:irlen_default]
     obs_est = np.convolve(son_est, ir, mode='full')  # [:obslen]
 
     return obs_est
@@ -168,7 +167,11 @@ def get_best_wiener(ir, lambdas, verbose=False):
         if tq is None:
             est = get_wiener(delta, ir, lm, snip=False)
             _, tq = temporal_quality(est)
-        print(f'===\nThe best Lambda is {lm}, which yields tq={tq}\n===')
+
+        print('===')
+        print(f'The best Lambda is {lm}, which yields tq={tq}')
+        print('===')
+        print()
 
     delta = np.zeros(ir.size)
     delta[0] = 1
@@ -231,13 +234,13 @@ def sample():
     simple test: get one soundtype and one impulse response, convolve them,
     deconvolve them, and check the result (plot it!)
     """
-    son = gen_son(sonlen)
-    ir = gen_ir(irlen)
+    son = gen_son(sonlen_default)
+    ir = gen_ir(irlen_default)
     obs = np.convolve(son, ir, mode='full')
     # let's add some noise to the obs
-    obs += np.random.randn(*obs.shape) * lambd_est
-    son_est = wiener_deconvolution(obs, ir,  lambd=lambd_est)[:sonlen]
-    ir_est = wiener_deconvolution(obs, son, lambd=lambd_est)[:irlen]
+    obs += np.random.randn(*obs.shape) * lambd_est_default
+    son_est = wiener_deconvolution(obs, ir,  lambd=lambd_est_default)[:sonlen_default]
+    ir_est = wiener_deconvolution(obs, son, lambd=lambd_est_default)[:irlen_default]
     # calc error
     son_err = np.sqrt(np.mean((son - son_est) ** 2))
     ir_err = np.sqrt(np.mean((ir - ir_est) ** 2))

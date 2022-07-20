@@ -9,7 +9,6 @@ import csv
 import numpy as np
 
 CSV_FILE = 'oscilloscope/noisesamp/sensornoise3.Wfm.csv'
-# TXT_FILE = 'oscilloscope/440test1/RefCurve_2022-06-23_0_175133.Wfm.txt'
 
 
 def _process_suffix(path, suffix):
@@ -22,17 +21,32 @@ def _process_suffix(path, suffix):
     return path if path.endswith(suffix) else f'{path}{suffix}'
 
 
+def read_txt(filename):
+    filename = _process_suffix(filename, '.txt')
+    with open(filename, 'r') as f:
+        data_arr = f.read().split()
+        data = np.array(list(map(float, list(data_arr))))
+
+    return data
+
 def read_osc_csv(csv_file):
+    """
+    reads .Wfm.csv file from Rhode and Schwarz RTO1004 oscilloscope
+    """
+    csv_file = _process_suffix(csv_file, '.csv')
+
     data = []
     with open(csv_file, newline='') as csvfile:
         spamreader = csv.reader(csvfile)
         for row in spamreader:
-            data.extend(row)
-
+            data.append(float(row[0]))
     return np.array(data)
 
 
 def csv2txt(csv_file, txt_file=None):
+    """
+    converts .Wfm.csv file to Audacity-readable .txt file
+    """
     csv_file = _process_suffix(csv_file, '.csv')
 
     if txt_file is None:

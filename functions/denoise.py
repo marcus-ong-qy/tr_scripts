@@ -5,19 +5,20 @@ Created on Fri Jun 10 16:00:54 2022
 @author: https://timsainburg.com/noise-reduction-python.html
 """
 
-import IPython
-from scipy.io import wavfile
-import scipy.signal
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.signal
 import librosa
-
 import time
 from datetime import timedelta as td
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 def _stft(y, n_fft, hop_length, win_length):
-    return librosa.stft(y=y, n_fft=n_fft, hop_length=hop_length, win_length=win_length)
+    return librosa.stft(y, n_fft=n_fft,
+                        hop_length=hop_length, win_length=win_length)
 
 
 def _istft(y, hop_length, win_length):
@@ -116,7 +117,7 @@ def removeNoise(
         start = time.time()
     # Calculate value to mask dB to
     mask_gain_dB = np.min(_amp_to_db(np.abs(sig_stft)))
-    print(noise_thresh, mask_gain_dB)
+    verbose and print(noise_thresh, mask_gain_dB)
     # Create a smoothing filter for the mask in time and frequency
     smoothing_filter = np.outer(
         np.concatenate(

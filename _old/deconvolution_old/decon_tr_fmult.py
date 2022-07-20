@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal, fft
 from config import RATE, DURATION
-from wave_gen import chirp,  plot, write_to_txt, norm, show_fft, get_fft, \
+from functions.wave_gen import chirp,  plot, write_to_txt, norm, show_fft, get_fft, \
     gauss_noise, show_fft_cmplx
 
 

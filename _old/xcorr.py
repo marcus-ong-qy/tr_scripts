@@ -8,9 +8,9 @@ Created on Tue May 31 15:18:59 2022
 import numpy as np
 from scipy import signal
 from config import RATE, DURATION
-from wave_gen import chirp, plot, write_to_txt, norm, show_fft, reverse as tr
+from functions.wave_gen import chirp, plot, write_to_txt, norm, show_fft, reverse as tr
 from data_analysis import read_txt
-from oscilloscope_read_csv_to_txt import _process_suffix
+from functions.read_files import _process_suffix
 
 
 time = np.arange(0, DURATION, 1/RATE)

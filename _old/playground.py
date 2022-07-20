@@ -7,7 +7,7 @@ Created on Mon May 23 16:21:53 2022
 
 import numpy as np
 from config import RATE, DURATION
-from wave_gen import gauss_noise, chirp, plot, norm, write_to_txt, show_fft
+from functions.wave_gen import gauss_noise, chirp, plot, norm, write_to_txt, show_fft
 
 
 time = np.arange(0, DURATION, 1/RATE)
