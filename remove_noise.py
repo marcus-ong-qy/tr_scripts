@@ -88,9 +88,9 @@ def remove_noise(sig, noise, highpassCutoff=None, writeToPath=None,
             sig_xf, sig_yf, title='noise and low filtered',
             xlim=xlim, ylim=ylim)
 
-    # sig_yf = threshold_filter(sig_yf, 0.2, scale=0.3)
+    # sig_yf = threshold_filter(sig_yf, 0.001, scale=0.0)
     # display_fft(sig_xf, sig_yf,
-    #             title='noise and low and threshold filtered', xlim=[0, 1000])
+    #             title='noise and low and threshold filtered', xlim=xlim, ylim=ylim)
 
     filtered_sig = irfft(sig_yf)
 
@@ -104,8 +104,8 @@ def remove_noise(sig, noise, highpassCutoff=None, writeToPath=None,
 
 
 if __name__ == '__main__':
-    NOISE_PATH = 'signal_data/noisesamp/sensornoise1.Wfm'
-    SIG_PATH = 'signal_data/response/rt1.Wfm'
+    NOISE_PATH = 'signal_data/noisesamp/testestnoise.Wfm'
+    SIG_PATH = 'signal_data/response/testest.Wfm'
 
-    remove_noise_csv(SIG_PATH, NOISE_PATH, highpassCutoff=200,
-                     xlim=[0, 200], ylim=[0, 200])
+    remove_noise_csv(SIG_PATH, NOISE_PATH, highpassCutoff=100,
+                     xlim=[0, 2000], ylim=[0, 200])

@@ -7,7 +7,7 @@ Created on Tue Jul 12 17:46:09 2022
 
 import numpy as np
 from functions.wave_gen import plot, timeline
-from functions.remove_noise import remove_noise_csv
+from remove_noise import remove_noise_csv
 
 
 def temporal_quality(data):
@@ -31,6 +31,12 @@ def temporal_quality(data):
 def eval_temporal_quality(path_file_csv, noise_file_csv, highpassCutoff=None):
     """
     input the path file for the focus signal, and the noise file\n
+    Output log glossary: \n
+    Peak: amplitude of the peak \n
+    E_T: the Temporal Quality of the signal \n
+    What is Temporal Quality?:
+    measures the temporal quality of the result, as detailed in
+    https://doi.org/10.1121/10.0009364, formula (4) (page 742)
     """
 
     data = remove_noise_csv(

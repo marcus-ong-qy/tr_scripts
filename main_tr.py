@@ -6,8 +6,9 @@ Created on Fri Jun 24 09:33:54 2022
 """
 
 import numpy as np
+import config
 from config import RATE, DURATION
-from functions.remove_noise import remove_noise_csv
+from remove_noise import remove_noise_csv
 from functions.wave_gen import exp_chirp_and_inverse
 from functions.xcorr import xcorr
 
@@ -26,14 +27,10 @@ if __name__ == '__main__':
     '''
     ENSURE CONFIG FILE DATA CORRECT
     '''
-    f0 = 100  # start frequency (Hz)
-    f1 = 2000  # end frequency (Hz)
-    a0 = 1  # start amplitude (normalised 0-1)
-    a1 = 1  # end amplitude (normalised 0-1)
-    clipThreshold = 1  # normalised 0-1
 
     time = np.arange(0, DURATION, 1/RATE)
-    chirp_data, inv = exp_chirp_and_inverse(time, f0, f1, a0, a1)
+    chirp_data, inv = exp_chirp_and_inverse(
+        time, config.f0, config.f1, config.a0, config.a1)
 
     args_list = [
         {
@@ -51,4 +48,4 @@ if __name__ == '__main__':
     ]
 
     for args in args_list:
-        main_xcorr(**args, highpassCutoff=2*f0, plot=1)
+        main_xcorr(**args, highpassCutoff=2*config.f0, plot=0)
