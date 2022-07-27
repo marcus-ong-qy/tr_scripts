@@ -14,11 +14,13 @@ from functions.xcorr import xcorr
 
 
 def main_xcorr(sig_file_csv, noise_file_csv, chirp, inv_chirp,
-               highpassCutoff=None, plot=False):
+               highpassCutoff=None, plot=False, write=True):
+
     sig_r = remove_noise_csv(sig_file_csv, noise_file_csv,
                              highpassCutoff=highpassCutoff,
                              plot=plot, write=False)
-    xcorr_path = f'{sig_file_csv[:-4]}_denoised_xcorr.txt'
+
+    xcorr_path = f'{sig_file_csv[:-4]}_denoised_xcorr.txt' if write else None
     xcorr(chirp, inv_chirp, sig_r,
           output_path=xcorr_path, showPlot=plot)
 
@@ -27,6 +29,7 @@ if __name__ == '__main__':
     '''
     ENSURE CONFIG FILE DATA CORRECT
     '''
+    HIGHPASS_CUTOFF = config.f0 * 2
 
     time = np.arange(0, DURATION, 1/RATE)
     chirp_data, inv = exp_chirp_and_inverse(
@@ -36,16 +39,15 @@ if __name__ == '__main__':
         {
             'sig_file_csv': 'signal_data/response/rt1.Wfm.csv',
             'noise_file_csv': 'signal_data/noisesamp/sensornoise1.Wfm.csv',
-            'chirp': chirp_data,
-            'inv_chirp': inv
         },
         {
             'sig_file_csv': 'signal_data/response/rt3.Wfm.csv',
             'noise_file_csv': 'signal_data/noisesamp/sensornoise3.Wfm.csv',
-            'chirp': chirp_data,
-            'inv_chirp': inv
         },
     ]
 
     for args in args_list:
-        main_xcorr(**args, highpassCutoff=2*config.f0, plot=0)
+        main_args = {'chirp': chirp_data, 'inv_chirp': inv, **args}
+
+        main_xcorr(**main_args, highpassCutoff=HIGHPASS_CUTOFF,
+                   plot=1, write=0)

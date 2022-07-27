@@ -13,6 +13,9 @@ from functions.wave_gen import plot, write_to_txt, norm, show_fft, reverse, \
     exp_chirp_and_inverse, timeline
 from functions.read_files import read_osc_csv
 
+import warnings
+warnings.simplefilter(action='ignore')
+
 
 def dbfft(x, fs, win=None):
     N = len(x)  # Length of input sequence
