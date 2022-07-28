@@ -29,6 +29,7 @@ def read_txt(filename):
 
     return data
 
+
 def read_osc_csv(csv_file):
     """
     reads .Wfm.csv file from Rhode and Schwarz RTO1004 oscilloscope

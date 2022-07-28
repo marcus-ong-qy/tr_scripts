@@ -9,30 +9,13 @@ import config
 from config import DURATION, RATE
 import numpy as np
 from functions.wave_gen import plot, timeline
+from functions.temporal_quality import temporal_quality
 from remove_noise import remove_noise_csv
 
 
 def energy(data):
     sq_sum = np.sum(np.abs(data)**2)
     return sq_sum * DURATION/RATE
-
-
-def temporal_quality(data):
-    """
-    measures the temporal quality of the result, as detailed in
-    https://doi.org/10.1121/10.0009364, formula (4) (page 742)
-    """
-    A_p = np.max(data)  # peak amplitude
-    M = data.size  # number of samples
-
-    sq_sum = 0  # sum of squares
-
-    for val in data:
-        sq_sum += val**2
-
-    e_t = A_p * np.sqrt(M/sq_sum)
-
-    return A_p, e_t
 
 
 def focal_signal_analysis(path_file_csv, noise_file_csv,

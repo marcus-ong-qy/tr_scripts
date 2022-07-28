@@ -7,6 +7,7 @@
 import numpy as np
 from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
+from functions.read_files import read_txt
 from temporal_quality import temporal_quality
 plt.rcParams.update({'font.size': 6})
 
@@ -69,8 +70,8 @@ def wiener_deconvolution(signal, kernel, lambd, snip=False):
 
 def test_wiener(obs, ir, lambd=lambd_est_default, snip=False):
     son_est = wiener_deconvolution(
-        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen_default]
-    obs_est = np.convolve(son_est, ir, mode='full')  # [:obslen]
+        obs, ir,  lambd=lambd, snip=snip)
+    obs_est = np.convolve(son_est, ir, mode='full')
 
     # plot
     plt.figure(frameon=False)
@@ -98,9 +99,8 @@ def test_wiener(obs, ir, lambd=lambd_est_default, snip=False):
 
 def get_wiener(obs, ir, lambd, snip=False):
     son_est = wiener_deconvolution(
-        obs, ir,  lambd=lambd, snip=snip)  # [:sonlen_default]
-    # ir_est  = wiener_deconvolution(obs, son, lambd=lambd_est_default)[:irlen_default]
-    obs_est = np.convolve(son_est, ir, mode='full')  # [:obslen]
+        obs, ir,  lambd=lambd, snip=snip)
+    obs_est = np.convolve(son_est, ir, mode='full')
 
     return obs_est
 
@@ -110,22 +110,20 @@ def get_wiener_error(obs, obs_est):
 
     if len(obs_est) != obs_len:
         print(obs_len, len(obs_est))
-        return print('length don\'t same')
+        return print('length not the same')
 
     return np.sqrt(np.mean((obs - obs_est) ** 2))
 
 
-def compare_wieners(obs, ir, lambdas, logMode='plot'):
+def compare_wiener_snr(obs, ir, lambdas, logMode='plot'):
     """
-    compares different lambda (SNR) values and see which produces the largest
-    wiener
+    compares different lambda (SNR) values and see which produces the best estimate
     """
     wieners = []
     # obs_sz = len(obs)
     for lm in lambdas:
         obs_est = get_wiener(obs, ir, lm, snip=False)
-        wieners.append(obs_est  # [len(obs_est)-obs_sz+1:]
-                       )
+        wieners.append(obs_est)
 
     num_plots = len(lambdas)
 
@@ -135,7 +133,7 @@ def compare_wieners(obs, ir, lambdas, logMode='plot'):
 
         plt.subplot(num_plots+1, 1, 1)
         plt.plot(obs)
-        plt.title('OG Wiener')
+        plt.title('Unit Impulse')
 
     for i, est in enumerate(wieners):
         peak, tq = temporal_quality(est)
@@ -144,9 +142,9 @@ def compare_wieners(obs, ir, lambdas, logMode='plot'):
             plt.subplot(num_plots+1, 1, i+2)
             plt.plot(est)
             plt.title(
-                f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
+                f'Wiener estimate with λ={lambdas[i]}, Temporal quality={tq}')
         elif logMode == 'print':
-            print(f'Wiener with λ={lambdas[i]}, Temporal quality={tq}')
+            print(f'Wiener estimate with λ={lambdas[i]}, Temporal quality={tq}')
 
     if logMode == 'plot':
         #
@@ -156,12 +154,12 @@ def compare_wieners(obs, ir, lambdas, logMode='plot'):
         plt.close()
 
 
-def get_best_wiener(ir, lambdas, verbose=False):
+def wiener_estimate_snr(ir, lambdas, verbose=False):
     """
     given an array of lambdas, assuming a singular maximum peak,
-    find the lambda that produces the best temporal quality
-    when unit impulse is deconvolved by given impulse response
-
+    find the lambda (SNR) that produces the best temporal quality
+    when unit impulse is deconvolved by given impulse response \n
+    returns the deconvolution result h'(t)
     """
     def print_result(lm, tq=None):
         if tq is None:
@@ -229,48 +227,7 @@ def get_best_wiener(ir, lambdas, verbose=False):
         verbose and print(f'Search length remaining: {len(seg)}')
 
 
-def sample():
-    """
-    simple test: get one soundtype and one impulse response, convolve them,
-    deconvolve them, and check the result (plot it!)
-    """
-    son = gen_son(sonlen_default)
-    ir = gen_ir(irlen_default)
-    obs = np.convolve(son, ir, mode='full')
-    # let's add some noise to the obs
-    obs += np.random.randn(*obs.shape) * lambd_est_default
-    son_est = wiener_deconvolution(obs, ir,  lambd=lambd_est_default)[:sonlen_default]
-    ir_est = wiener_deconvolution(obs, son, lambd=lambd_est_default)[:irlen_default]
-    # calc error
-    son_err = np.sqrt(np.mean((son - son_est) ** 2))
-    ir_err = np.sqrt(np.mean((ir - ir_est) ** 2))
-    print(
-        "single_example_test(): RMS errors son %g, IR %g" % (son_err, ir_err))
-
-    # plot
-    plt.figure(frameon=False)
-    #
-    plt.subplot(3, 2, 1)
-    plt.plot(son)
-    plt.title("son")
-    plt.subplot(3, 2, 3)
-    plt.plot(son_est)
-    plt.title("son_est")
-    plt.subplot(3, 2, 2)
-    plt.plot(ir)
-    plt.title("ir")
-    plt.subplot(3, 2, 4)
-    plt.plot(ir_est)
-    plt.title("ir_est")
-    plt.subplot(3, 1, 3)
-    plt.plot(obs)
-    plt.title("obs")
-    #
-    plt.tight_layout()
-    plt.show()
-    #
-    plt.close()
-
-
 if __name__ == '__main__':
-    sample()
+    sig_h = read_txt('../signal_data/response/rt1.Wfm_denoised_xcorr.txt')
+    lambdas = np.linspace(0, 5, 101)
+    wiener_estimate_snr(sig_h, lambdas, verbose=True)
